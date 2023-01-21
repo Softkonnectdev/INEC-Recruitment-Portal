@@ -16,6 +16,10 @@ namespace Recruitment_Portal_System.Models
             // Add custom user claims here
             return userIdentity;
         }
+
+
+        public virtual ApplicantProfile ApplicantProfile { get; set; }
+
     }
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
@@ -29,5 +33,17 @@ namespace Recruitment_Portal_System.Models
         {
             return new ApplicationDbContext();
         }
+
+        public DbSet<ApplicantProfile> ApplicantProfiles { get; set; }
+        public DbSet<ApplicantWorkExperience> ApplicantWorkExperiences { get; set; }
+        public DbSet<ApplicationHistory> ApplicationHistories { get; set; }
+        public DbSet<CV>  CVs { get; set; }
+        public DbSet<Job> Jobs { get; set; }
+        public DbSet<JobApplication> JobApplications { get; set; }
+        public DbSet<JobCategory> JobCategories { get; set; }
+        public DbSet<ShortListedCandidate> ShortListedCandidates { get; set; }
+        public DbSet<StateBranch> StateBranches { get; set; }
+
+
     }
 }
