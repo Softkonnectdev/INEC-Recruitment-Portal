@@ -17,33 +17,39 @@ namespace Recruitment_Portal_System.Models
         }
 
         [Required(ErrorMessage = "Surname is NULL")]
+        [Display(Name = "Sur Name")]
         public string SurName
         {
             get; set;
         }
 
         [Required(ErrorMessage = "FirstName is NULL")]
+        [Display(Name = "First Name")]
         public string FirstName
         {
             get; set;
         }
         [Required(ErrorMessage = "MiddleName is NULL")]
+        [Display(Name = "Middle Name")]
         public string MiddleName
         {
             get; set;
         }
         [Required(ErrorMessage = "Email is NULL")]
         [DataType(DataType.EmailAddress, ErrorMessage = "Invalid Email Address")]
+        [Display(Name = "Email")]
         public string Email
         {
             get; set;
         }
-        [Required(ErrorMessage = "Password is NULL")]
+
         [DataType(DataType.Password)]
+        [NotMapped]
         public string Password
         {
             get; set;
         }
+
         [Required(ErrorMessage = "Phone is NULL")]
         [DataType(DataType.PhoneNumber, ErrorMessage = "Invalid Phone Number")]
         [StringLength(11, ErrorMessage = "Not more than 11 characters!")]
@@ -53,6 +59,8 @@ namespace Recruitment_Portal_System.Models
         }
 
         [Required(ErrorMessage = "DOB is NULL")]
+        [DisplayFormat(DataFormatString = "dd-MM-yyyy", ApplyFormatInEditMode = true)]
+        [DataType(DataType.Date)]
         public DateTime DOB
         {
             get; set;
@@ -66,62 +74,53 @@ namespace Recruitment_Portal_System.Models
 
         [Required(ErrorMessage = "Permanent Address is NULL")]
         [Display(Name = "Permanent Resident")]
-        public string PermanentResident
+        [DataType(DataType.Text)]
+        public string ResidentialAddress
         {
             get; set;
         }
         [Required(ErrorMessage = "LGA is NULL")]
+        [Display(Name = "LGA of origin")]
         public string LGAOrigin
         {
             get; set;
         }
         [Required(ErrorMessage = "State is NULL")]
+        [Display(Name = "State of origin")]
         public string StateOrigin
         {
             get; set;
         }
-
-        [Required(ErrorMessage = "Residential Country is NULL")]
-        [Display(Name = "Residential Country")]
-        public string ResidentialCountry
-        {
-            get; set;
-        }
-
-        [Required(ErrorMessage = "Nationality is NULL")]
-        public string Nationality
-        {
-            get; set;
-        }
-
+        
         public string Skills
         {
             get; set;
         }
 
-        [Required(ErrorMessage = "Passport is NULL")]
         public byte[] Passport
         {
             get; set;
         }
 
         [Required(ErrorMessage = "Preferred Job Location is NULL")]
+        [Display(Name = "Preferred Job Location")]
         public string PreferredJobLocation
         {
             get; set;
         }
 
         [Required(ErrorMessage = "Nationality is NULL")]
+        [Display(Name = "Email Notification")]
         public bool EmailNotification
         {
             get; set;
         }
 
-        public DateTime CreatedOn
+        public DateTime? CreatedOn
         {
             get; set;
         }
-
+        
         [NotMapped]
         public HttpPostedFileBase PassportUpload { get; set; }
 

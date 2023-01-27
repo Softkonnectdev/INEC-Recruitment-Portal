@@ -1,12 +1,15 @@
 ﻿using Recruitment_Portal_System.Models;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using UBA_Network_Security_System.Models;
 
 namespace Recruitment_Portal_System.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {
         private ApplicationDbContext con;
@@ -50,7 +53,7 @@ namespace Recruitment_Portal_System.Controllers
         {
             string msg = "";
 
-            if (ModelState.IsValid && model.BranchAdminID != null)
+            if (ModelState.IsValid)
             {
 
                 var dbObj = con.StateBranches.SingleOrDefault(o => o.Id == model.Id);
@@ -61,9 +64,8 @@ namespace Recruitment_Portal_System.Controllers
                         dbObj.Name = model.Name;
                         dbObj.Description = model.Description;
                         dbObj.Address = model.Address;
-                        dbObj.BranchAdminID = model.BranchAdminID;
                         con.SaveChanges();
-                        msg = "State Branch has been created successfully!";
+                        msg = "State Branch has been updated successfully!";
                     }
                     else
                     {
@@ -72,11 +74,11 @@ namespace Recruitment_Portal_System.Controllers
                         {
                             Name = model.Name,
                             Description = model.Description,
-                            BranchAdminID = model.BranchAdminID,
                             Address = model.Address
                         };
 
                         con.StateBranches.Add(objStateBranch);
+                        msg = "State Branch has been created successfully!";
                         con.SaveChanges();
                     }
                 }
@@ -110,7 +112,6 @@ namespace Recruitment_Portal_System.Controllers
                         model.Id = obj.Id;
                         model.Name = obj.Name;
                         model.Description = obj.Description;
-                        model.BranchAdminID = obj.BranchAdminID;
                         model.Address = obj.Address;
                     }
                 }
@@ -123,7 +124,7 @@ namespace Recruitment_Portal_System.Controllers
             return PartialView("AddEditStateBranch", model);
         }
 
-        [Authorize(Roles = "SuperAdmin")]
+
         public JsonResult DeleteStateBranch(string ID)
         {
 
@@ -188,7 +189,7 @@ namespace Recruitment_Portal_System.Controllers
                         dbObj.Title = model.Title;
                         dbObj.Description = model.Description;
                         con.SaveChanges();
-                        msg = "Job Category has been created successfully!";
+                        msg = "Job Category has been updated successfully!";
                     }
                     else
                     {
@@ -201,6 +202,7 @@ namespace Recruitment_Portal_System.Controllers
 
                         con.JobCategories.Add(objJobCategory);
                         con.SaveChanges();
+                        msg = "Job Category has been created successfully!";
                     }
                 }
                 catch (Exception ex)
@@ -224,7 +226,7 @@ namespace Recruitment_Portal_System.Controllers
             JobCategory model = new JobCategory();
             try
             {
-                if (ID != null)
+                if (ID != null && ID != "")
                 {
                     var obj = con.JobCategories.SingleOrDefault(o => o.Id == ID);
                     if (obj != null)
@@ -243,7 +245,7 @@ namespace Recruitment_Portal_System.Controllers
             return PartialView("AddEditJobCategory", model);
         }
 
-        [Authorize(Roles = "SuperAdmin")]
+
         public JsonResult DeleteJobCategory(string ID)
         {
 
@@ -262,11 +264,12 @@ namespace Recruitment_Portal_System.Controllers
         }
         #endregion
 
-        #region      JOB CATEGORY CRUD
+        #region      JOB CRUD
 
         [HttpGet]
         public ActionResult Job(string Msg)
         {
+            ViewBag.CurrencyFmt = CultureInfo.CreateSpecificCulture("NG-NG");
 
             if (Msg != null)
             {
@@ -293,25 +296,23 @@ namespace Recruitment_Portal_System.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public JsonResult Job(Job model)
-        {
+         {
             string msg = "";
 
-            if (ModelState.IsValid)
-            {
-
-                var dbObj = con.Jobs.SingleOrDefault(o => o.Id == model.Id);
+      
+                var dbObj = con.Jobs.FirstOrDefault(o => o.Id == model.Id);
                 try
                 {
-                    if (model.Id != null && dbObj != null)
+                    if (dbObj != null)
                     {
                         dbObj.Title = model.Title;
-                        dbObj.JobCategoryID = model.JobCategoryID;
-                        dbObj.JobStateBranchID = model.JobStateBranchID;
-                        dbObj.JobType = model.JobType;
+                        dbObj.JobCategoryID = model.JobCategoryID ?? dbObj.JobCategoryID;
+                        dbObj.JobStateBranchID = model.JobStateBranchID ?? dbObj.JobStateBranchID;
+                        dbObj.JobType = model.JobType ?? dbObj.JobType;
                         dbObj.Description = model.Description;
                         dbObj.Salary = model.Salary;
                         con.SaveChanges();
-                        msg = "Job has been created successfully!";
+                        msg = "Job has been update successfully!";
                     }
                     else
                     {
@@ -325,9 +326,16 @@ namespace Recruitment_Portal_System.Controllers
                             Description = model.Description,
                             Salary = model.Salary
                         };
-
-                        con.Jobs.Add(objJob);
-                        con.SaveChanges();
+                        if (ModelState.IsValid)
+                        {
+                            con.Jobs.Add(objJob);
+                            con.SaveChanges();
+                            msg = "Job has been saved successfully!";
+                        }
+                        else
+                        {
+                            msg = "OOOPS, PLEASE PROVIDE ALL VALUES!";
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -337,11 +345,7 @@ namespace Recruitment_Portal_System.Controllers
                     else
                         msg = "TRY AGAIN, IF PERSISTED, CONTACT ADMIN! \n" + ex.Message.ToString();
                 }
-            }
-            else
-            {
-                msg = "OOOPS, PLEASE PROVIDE ALL VALUES!";
-            }
+           
             return Json(msg, JsonRequestBehavior.AllowGet);
         }
 
@@ -353,12 +357,14 @@ namespace Recruitment_Portal_System.Controllers
             {
                 if (ID != null)
                 {
-                    var obj = con.JobCategories.SingleOrDefault(o => o.Id == ID);
+                    var obj = con.Jobs.SingleOrDefault(o => o.Id == ID);
                     if (obj != null)
                     {
                         model.Id = obj.Id;
                         model.Title = obj.Title;
                         model.Description = obj.Description;
+                        model.Salary = obj.Salary;
+
                     }
                 }
             }
@@ -367,10 +373,16 @@ namespace Recruitment_Portal_System.Controllers
                 Session["grmsg"] = "TRY AGAIN, IF PERSISTED, CONTACT ADMIN!";
                 return RedirectToAction("StateBranch");
             }
+            UtilityHelpers utilityHelpers = new UtilityHelpers();
+
+            ViewBag.JobCategories = con.JobCategories.ToList();
+            ViewBag.JobTypes = utilityHelpers.GetJobTypeList();
+            ViewBag.StateBranches = con.StateBranches.ToList();
+
+
             return PartialView("AddEditJob", model);
         }
 
-        [Authorize(Roles = "SuperAdmin")]
         public JsonResult DeleteJob(string ID)
         {
 

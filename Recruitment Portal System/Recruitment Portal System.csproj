@@ -173,12 +173,41 @@
     <Compile Include="Controllers\ApplicantController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\RoleController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Migrations\202301191406274_Initial.cs" />
     <Compile Include="Migrations\202301191406274_Initial.Designer.cs">
       <DependentUpon>202301191406274_Initial.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202301241348096_Modification1.cs" />
+    <Compile Include="Migrations\202301241348096_Modification1.Designer.cs">
+      <DependentUpon>202301241348096_Modification1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202301260742478_Modification2.cs" />
+    <Compile Include="Migrations\202301260742478_Modification2.Designer.cs">
+      <DependentUpon>202301260742478_Modification2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202301260756384_Modification3.cs" />
+    <Compile Include="Migrations\202301260756384_Modification3.Designer.cs">
+      <DependentUpon>202301260756384_Modification3.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202301260918509_Modification4.cs" />
+    <Compile Include="Migrations\202301260918509_Modification4.Designer.cs">
+      <DependentUpon>202301260918509_Modification4.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202301261036568_Modification5.cs" />
+    <Compile Include="Migrations\202301261036568_Modification5.Designer.cs">
+      <DependentUpon>202301261036568_Modification5.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202301271057223_Updates.cs" />
+    <Compile Include="Migrations\202301271057223_Updates.Designer.cs">
+      <DependentUpon>202301271057223_Updates.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202301271317301_Updates9.cs" />
+    <Compile Include="Migrations\202301271317301_Updates9.Designer.cs">
+      <DependentUpon>202301271317301_Updates9.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ApplicantWorkExperience.cs" />
@@ -195,6 +224,8 @@
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\ShortListedCandidate.cs" />
     <Compile Include="Models\StateBranch.cs" />
+    <Compile Include="Models\UploadEmployeePassportViewModel.cs" />
+    <Compile Include="Models\UserRoleModel.cs" />
     <Compile Include="Models\Utility\BinaryToImage.cs" />
     <Compile Include="Models\Utility\GetDateHelper.cs" />
     <Compile Include="Models\Utility\Utilities.cs" />
@@ -206,13 +237,196 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\bootstrapx.css" />
+    <Content Include="Content\Custom.css" />
+    <Content Include="Content\font-awesome.css" />
+    <Content Include="Content\font-awesome.min.css" />
+    <Content Include="Content\main.css" />
+    <Content Include="Content\style.css" />
+    <Content Include="Content\util.css" />
     <Content Include="favicon.ico" />
+    <Content Include="fonts\font-awesome-4.7.0\css\font-awesome.css" />
+    <Content Include="fonts\font-awesome-4.7.0\css\font-awesome.min.css" />
+    <Content Include="fonts\font-awesome-4.7.0\fonts\fontawesome-webfont.svg" />
+    <Content Include="fonts\font-awesome-4.7.0\HELP-US-OUT.txt" />
+    <Content Include="fonts\fontawesome-webfont.svg" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="fonts\montserrat\OFL.txt" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <Content Include="Images\accountLocked.png" />
+    <Content Include="Images\annualanalysis.gif" />
+    <Content Include="Images\anonymous-User.png" />
+    <Content Include="Images\applicants.png" />
+    <Content Include="Images\bg.jpg" />
+    <Content Include="Images\BgEsutLogo.png" />
+    <Content Include="Images\company1.jpg" />
+    <Content Include="Images\company2.jpg" />
+    <Content Include="Images\company3.jpg" />
+    <Content Include="Images\CompanyRegistration.jpg" />
+    <Content Include="Images\esutlogo.png" />
+    <Content Include="Images\GrantAccess.png" />
+    <Content Include="Images\HowToImages\annualanalysis.gif" />
+    <Content Include="Images\HowToImages\BgEsutLogo.png" />
+    <Content Include="Images\HowToImages\BranchCoordinatorDashboard.png" />
+    <Content Include="Images\HowToImages\Company.png" />
+    <Content Include="Images\HowToImages\CompanyITAdminApproveStudent.png" />
+    <Content Include="Images\HowToImages\CompanyITAdminCommentLog.png" />
+    <Content Include="Images\HowToImages\CompanyITAdminDashboard.png" />
+    <Content Include="Images\HowToImages\CompanyITAdminGenerateITFRegister.png" />
+    <Content Include="Images\HowToImages\CompanyITAdminRegister.png" />
+    <Content Include="Images\HowToImages\CompanyITAdminViewLog.png" />
+    <Content Include="Images\HowToImages\CreatingInstitution.png" />
+    <Content Include="Images\HowToImages\ExcelFormat.png" />
+    <Content Include="Images\HowToImages\General Home Page.png" />
+    <Content Include="Images\HowToImages\GeneralMenu.png" />
+    <Content Include="Images\HowToImages\InstitutionAdminRegister.png" />
+    <Content Include="Images\HowToImages\InstitutionITFAdminExportResult.png" />
+    <Content Include="Images\HowToImages\InstitutionITFAdminGenerateLog.png" />
+    <Content Include="Images\HowToImages\InstitutionITFAdminRequestResult.png" />
+    <Content Include="Images\HowToImages\InstitutionITFDashboard.png" />
+    <Content Include="Images\HowToImages\InstitutionITFDashboard2.png" />
+    <Content Include="Images\HowToImages\InstitutionITFSendNotifcation.png" />
+    <Content Include="Images\HowToImages\InstitutionITStudentAppList.png" />
+    <Content Include="Images\HowToImages\InstitutionITStudentUpload.png" />
+    <Content Include="Images\HowToImages\InstitutionList.png" />
+    <Content Include="Images\HowToImages\InstitutionSupervisorApproveStudent.png" />
+    <Content Include="Images\HowToImages\InstitutionSupervisorDashboard.png" />
+    <Content Include="Images\HowToImages\ITFBranch.png" />
+    <Content Include="Images\HowToImages\ITFBranchApproveStudent.png" />
+    <Content Include="Images\HowToImages\ITFBranchCoordinatoreRegister.png" />
+    <Content Include="Images\HowToImages\ITFLogoBgsm.png" />
+    <Content Include="Images\HowToImages\NationAdminDashboard.png" />
+    <Content Include="Images\HowToImages\NewInstitution.png" />
+    <Content Include="Images\HowToImages\StudentDashboard.png" />
+    <Content Include="Images\HowToImages\StudentLog.png" />
+    <Content Include="Images\HowToImages\StudentLog2.png" />
+    <Content Include="Images\HowToImages\StudentPlacementRequest.png" />
+    <Content Include="Images\HowToImages\StudentRegister.png" />
+    <Content Include="Images\HowToImages\students.png" />
+    <Content Include="Images\HowToImages\StudentViewCompanyList.png" />
+    <Content Include="Images\HowToImages\StudentViewITFBranchList.png" />
+    <Content Include="Images\img-01.png" />
+    <Content Include="Images\inec1.png" />
+    <Content Include="Images\inec2.jpg" />
+    <Content Include="Images\INEC3.png" />
+    <Content Include="Images\inec4.jpg" />
+    <Content Include="Images\inec5.jpeg" />
+    <Content Include="Images\inec6.jpg" />
+    <Content Include="Images\institution1.png" />
+    <Content Include="Images\intenship1.png" />
+    <Content Include="Images\intenship2.png" />
+    <Content Include="Images\intenship3.png" />
+    <Content Include="Images\intenship4.png" />
+    <Content Include="Images\ITFITCertificatePNG.png" />
+    <Content Include="Images\ITFLogo.jpg" />
+    <Content Include="Images\ITFLogoBgsm.png" />
+    <Content Include="Images\job1.png" />
+    <Content Include="Images\job2.png" />
+    <Content Include="Images\job3.png" />
+    <Content Include="Images\job4.png" />
+    <Content Include="Images\jobportal.png" />
+    <Content Include="Images\load.gif" />
+    <Content Include="Images\load2.gif" />
+    <Content Include="Images\loading.gif" />
+    <Content Include="Images\loadingx.gif" />
+    <Content Include="Images\loadxx.gif" />
+    <Content Include="Images\location_icon.png" />
+    <Content Include="Images\mail_icon.png" />
+    <Content Include="Images\meditation.png" />
+    <Content Include="Images\phone_icon.png" />
+    <Content Include="Images\Register.jpg" />
+    <Content Include="Images\SchoolRegistration.png" />
+    <Content Include="Images\searchJob.png" />
+    <Content Include="Images\SoftKonnectLogo3.png" />
+    <Content Include="Images\studentRegister.jpg" />
+    <Content Include="Images\students.png" />
+    <Content Include="Images\SUG.jpg" />
+    <Content Include="Images\webBackground2.jpg" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="Content\bootstrapx.css.map" />
+    <Content Include="fonts\font-awesome-4.7.0\fonts\fontawesome-webfont.eot" />
+    <Content Include="fonts\font-awesome-4.7.0\fonts\fontawesome-webfont.ttf" />
+    <Content Include="fonts\font-awesome-4.7.0\fonts\fontawesome-webfont.woff" />
+    <Content Include="fonts\font-awesome-4.7.0\fonts\fontawesome-webfont.woff2" />
+    <Content Include="fonts\font-awesome-4.7.0\fonts\FontAwesome.otf" />
+    <Content Include="fonts\font-awesome-4.7.0\less\animated.less" />
+    <Content Include="fonts\font-awesome-4.7.0\less\bordered-pulled.less" />
+    <Content Include="fonts\font-awesome-4.7.0\less\core.less" />
+    <Content Include="fonts\font-awesome-4.7.0\less\fixed-width.less" />
+    <Content Include="fonts\font-awesome-4.7.0\less\font-awesome.less" />
+    <Content Include="fonts\font-awesome-4.7.0\less\icons.less" />
+    <Content Include="fonts\font-awesome-4.7.0\less\larger.less" />
+    <Content Include="fonts\font-awesome-4.7.0\less\list.less" />
+    <Content Include="fonts\font-awesome-4.7.0\less\mixins.less" />
+    <Content Include="fonts\font-awesome-4.7.0\less\path.less" />
+    <Content Include="fonts\font-awesome-4.7.0\less\rotated-flipped.less" />
+    <Content Include="fonts\font-awesome-4.7.0\less\screen-reader.less" />
+    <Content Include="fonts\font-awesome-4.7.0\less\stacked.less" />
+    <Content Include="fonts\font-awesome-4.7.0\less\variables.less" />
+    <Content Include="fonts\font-awesome-4.7.0\scss\font-awesome.scss" />
+    <Content Include="fonts\font-awesome-4.7.0\scss\_animated.scss" />
+    <Content Include="fonts\font-awesome-4.7.0\scss\_bordered-pulled.scss" />
+    <Content Include="fonts\font-awesome-4.7.0\scss\_core.scss" />
+    <Content Include="fonts\font-awesome-4.7.0\scss\_fixed-width.scss" />
+    <Content Include="fonts\font-awesome-4.7.0\scss\_icons.scss" />
+    <Content Include="fonts\font-awesome-4.7.0\scss\_larger.scss" />
+    <Content Include="fonts\font-awesome-4.7.0\scss\_list.scss" />
+    <Content Include="fonts\font-awesome-4.7.0\scss\_mixins.scss" />
+    <Content Include="fonts\font-awesome-4.7.0\scss\_path.scss" />
+    <Content Include="fonts\font-awesome-4.7.0\scss\_rotated-flipped.scss" />
+    <Content Include="fonts\font-awesome-4.7.0\scss\_screen-reader.scss" />
+    <Content Include="fonts\font-awesome-4.7.0\scss\_stacked.scss" />
+    <Content Include="fonts\font-awesome-4.7.0\scss\_variables.scss" />
+    <Content Include="fonts\fontawesome-webfont.eot" />
+    <Content Include="fonts\fontawesome-webfont.ttf" />
+    <Content Include="fonts\fontawesome-webfont.woff" />
+    <Content Include="fonts\fontawesome-webfont.woff2" />
+    <Content Include="fonts\FontAwesome.otf" />
+    <Content Include="fonts\montserrat\Montserrat-Black.ttf" />
+    <Content Include="fonts\montserrat\Montserrat-BlackItalic.ttf" />
+    <Content Include="fonts\montserrat\Montserrat-Bold.ttf" />
+    <Content Include="fonts\montserrat\Montserrat-BoldItalic.ttf" />
+    <Content Include="fonts\montserrat\Montserrat-ExtraBold.ttf" />
+    <Content Include="fonts\montserrat\Montserrat-ExtraBoldItalic.ttf" />
+    <Content Include="fonts\montserrat\Montserrat-ExtraLight.ttf" />
+    <Content Include="fonts\montserrat\Montserrat-ExtraLightItalic.ttf" />
+    <Content Include="fonts\montserrat\Montserrat-Italic.ttf" />
+    <Content Include="fonts\montserrat\Montserrat-Light.ttf" />
+    <Content Include="fonts\montserrat\Montserrat-LightItalic.ttf" />
+    <Content Include="fonts\montserrat\Montserrat-Medium.ttf" />
+    <Content Include="fonts\montserrat\Montserrat-MediumItalic.ttf" />
+    <Content Include="fonts\montserrat\Montserrat-Regular.ttf" />
+    <Content Include="fonts\montserrat\Montserrat-SemiBold.ttf" />
+    <Content Include="fonts\montserrat\Montserrat-SemiBoldItalic.ttf" />
+    <Content Include="fonts\montserrat\Montserrat-Thin.ttf" />
+    <Content Include="fonts\montserrat\Montserrat-ThinItalic.ttf" />
+    <Content Include="fonts\poppins\Poppins-Black.ttf" />
+    <Content Include="fonts\poppins\Poppins-BlackItalic.ttf" />
+    <Content Include="fonts\poppins\Poppins-Bold.ttf" />
+    <Content Include="fonts\poppins\Poppins-BoldItalic.ttf" />
+    <Content Include="fonts\poppins\Poppins-ExtraBold.ttf" />
+    <Content Include="fonts\poppins\Poppins-ExtraBoldItalic.ttf" />
+    <Content Include="fonts\poppins\Poppins-ExtraLight.ttf" />
+    <Content Include="fonts\poppins\Poppins-ExtraLightItalic.ttf" />
+    <Content Include="fonts\poppins\Poppins-Italic.ttf" />
+    <Content Include="fonts\poppins\Poppins-Light.ttf" />
+    <Content Include="fonts\poppins\Poppins-LightItalic.ttf" />
+    <Content Include="fonts\poppins\Poppins-Medium.ttf" />
+    <Content Include="fonts\poppins\Poppins-MediumItalic.ttf" />
+    <Content Include="fonts\poppins\Poppins-Regular.ttf" />
+    <Content Include="fonts\poppins\Poppins-SemiBold.ttf" />
+    <Content Include="fonts\poppins\Poppins-SemiBoldItalic.ttf" />
+    <Content Include="fonts\poppins\Poppins-Thin.ttf" />
+    <Content Include="fonts\poppins\Poppins-ThinItalic.ttf" />
+    <Content Include="Scripts\bootstrapx.bundle.js.map" />
+    <Content Include="Scripts\jquery-1.9.1.min.map" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
+    <Content Include="Scripts\bootstrapx.bundle.js" />
+    <None Include="Scripts\jquery-1.9.1.intellisense.js" />
+    <Content Include="Scripts\jquery-1.9.1.js" />
+    <Content Include="Scripts\jquery-1.9.1.min.js" />
     <Content Include="Scripts\jquery-3.4.1.js" />
     <Content Include="Scripts\jquery-3.4.1.min.js" />
     <Content Include="Scripts\jquery-3.4.1.slim.js" />
@@ -222,7 +436,15 @@
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Scripts\main.js" />
+    <Content Include="Scripts\mainxyz.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
+    <Content Include="vendor\animate\animate.css" />
+    <Content Include="vendor\select2\select2.css" />
+    <Content Include="vendor\select2\select2.js" />
+    <Content Include="vendor\select2\select2.min.css" />
+    <Content Include="vendor\select2\select2.min.js" />
+    <Content Include="vendor\tilt\tilt.jquery.min.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -257,12 +479,26 @@
     <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
+    <Content Include="Views\Account\RegisterStudent.cshtml" />
+    <Content Include="Views\Admin\AddEditStateBranch.cshtml" />
+    <Content Include="Views\Admin\StateBranch.cshtml" />
+    <Content Include="Views\Admin\JobCategory.cshtml" />
+    <Content Include="Views\Admin\AddEditJobCategory.cshtml" />
+    <Content Include="Views\Admin\Job.cshtml" />
+    <Content Include="Views\Admin\AddEditJob.cshtml" />
+    <Content Include="Views\Applicant\AddEditApplicant.cshtml" />
+    <Content Include="Views\Applicant\MyProfile.cshtml" />
+    <Content Include="Views\Applicant\UploadPassport.cshtml" />
+    <Content Include="Views\Role\Create.cshtml" />
+    <Content Include="Views\Role\Index.cshtml" />
+    <Content Include="Views\Role\RoleAssignment.cshtml" />
+    <Content Include="Views\Role\RoleRequest.cshtml" />
+    <Content Include="Views\Role\UserRoles.cshtml" />
+    <Content Include="Views\Applicant\CreateProfile.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Uploads\Passports\" />
-    <Folder Include="Views\Admin\" />
-    <Folder Include="Views\Applicant\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
@@ -280,6 +516,27 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\202301191406274_Initial.resx">
       <DependentUpon>202301191406274_Initial.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202301241348096_Modification1.resx">
+      <DependentUpon>202301241348096_Modification1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202301260742478_Modification2.resx">
+      <DependentUpon>202301260742478_Modification2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202301260756384_Modification3.resx">
+      <DependentUpon>202301260756384_Modification3.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202301260918509_Modification4.resx">
+      <DependentUpon>202301260918509_Modification4.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202301261036568_Modification5.resx">
+      <DependentUpon>202301261036568_Modification5.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202301271057223_Updates.resx">
+      <DependentUpon>202301271057223_Updates.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202301271317301_Updates9.resx">
+      <DependentUpon>202301271317301_Updates9.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

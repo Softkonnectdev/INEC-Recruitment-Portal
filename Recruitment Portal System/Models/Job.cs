@@ -48,7 +48,7 @@ namespace Recruitment_Portal_System.Models
 
         [Required(ErrorMessage = "Salary is NULL")]
         [DataType(DataType.Currency)]
-        public string Salary
+        public decimal Salary
         {
             get; set;
         }

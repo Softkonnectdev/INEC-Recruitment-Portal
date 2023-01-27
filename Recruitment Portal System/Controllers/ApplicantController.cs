@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using Recruitment_Portal_System.Models;
 using System;
@@ -10,6 +11,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using UBA_Network_Security_System.Models;
 
 namespace Recruitment_Portal_System.Controllers
 {
@@ -22,6 +24,7 @@ namespace Recruitment_Portal_System.Controllers
 
         public ApplicantController()
         {
+            con = new ApplicationDbContext();
         }
 
         public ApplicantController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
@@ -58,301 +61,192 @@ namespace Recruitment_Portal_System.Controllers
 
         #region      Applicant CRUD
 
+        [Authorize(Roles = "Applicant")]
         [HttpGet]
-        public ActionResult MyProfile(string Msg)
+        public ActionResult MyProfile()
         {
-
-            if (Msg != null)
+            if (TempData["msg"] != null)
             {
-                ViewBag.Msg = Msg.ToString();
+                ViewBag.Msg = TempData["msg"].ToString();
             }
 
-            try
+            string Email = User.Identity.Name;
+            if (Email != "")
             {
-                var user_email = User.Identity.Name;
-                var user = con.Users.FirstOrDefault(c => c.Email == user_email);
-                var myProfile = con.ApplicantProfiles.FirstOrDefault(x => x.UserId == user.Id);
-                if (myProfile != null)
+                var user = con.Users.Where(x => x.Email == Email).First();
+                if (Email != null && user != null)
                 {
-                    ViewBag.Applicant = myProfile;
+                    var objAppProfile = con.ApplicantProfiles.FirstOrDefault(x => x.UserId == user.Id);
+
+                    if (objAppProfile != null)
+                    {
+                        if (objAppProfile.Passport != null)
+                        {
+                            var base64 = Convert.ToBase64String(objAppProfile.Passport);
+                            var imgSrc = String.Format("data:image/png;base64,{0}", base64);
+                            ViewBag.Passport = imgSrc;
+                        }
+
+                        return View(objAppProfile);
+                    }
+                    else
+                    {
+                        var newApplicant = new ApplicantProfile()
+                        {
+                            Email = user.Email
+                        };
+                        UtilityHelpers utilityHelpers = new UtilityHelpers();
+                        ViewBag.GenderList = utilityHelpers.GetGenders();
+                        return View("CreateProfile",newApplicant);
+                    }
+                }
+                else
+                {
+                    HttpNotFound();
                 }
             }
-            catch (Exception ex)
-            {
-                ViewBag.msg = Session["csmsg"].ToString() + " " + ex.Message.ToString();
-                return View();
-            }
+
+            TempData["msg"] = "Sorry, you need to login as applicant!";
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
+        public ActionResult CreateProfile()
+        {
+            UtilityHelpers utilityHelpers = new UtilityHelpers();
+            ViewBag.GenderList = utilityHelpers.GetGenders();
             return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> MyProfile(ApplicantProfile model)
+        public async Task<ActionResult> CreateProfile(ApplicantProfile model)
         {
             string msg = "";
 
-            if (ModelState.IsValid)
+            try
             {
 
-                try
+                //COME BACK AND CHECK IF USER WITH SAME EMAIL EXIST
+                string role = "Applicant";
+                var chkUserExist = con.Users.Where(x => x.Email == model.Email).FirstOrDefault();
+                var chkApplicantExist = con.ApplicantProfiles.FirstOrDefault(x => x.Email == model.Email);
+
+                if (chkUserExist == null && chkApplicantExist == null)
                 {
-
-                    //COME BACK AND CHECK IF USER WITH SAME EMAIL EXIST
-
-                    var chkUserExist = con.Users.FirstOrDefault(x => x.Email == model.Email);
-                    var chkApplicantExist = con.ApplicantProfiles.FirstOrDefault(x => x.Email == model.Email);
-
-                    if (chkUserExist == null && chkApplicantExist == null)
+                    //  -   -   BOTH USER AND APPLICANTPROFILE DOES NOT EXIST
+                    var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+                    var result = await UserManager.CreateAsync(user, model.Password);
+                    if (result.Succeeded)
                     {
-                        //  -   -   BOTH USER AND APPLICANTPROFILE DOES NOT EXIST
-                        var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
-                        var result = await UserManager.CreateAsync(user, model.Password);
-                        if (result.Succeeded)
+
+                        var dbRole = con.Roles.Where(x => x.Name == role).FirstOrDefault();
+                        if (dbRole != null)
                         {
-                            ////CHECK IF UPLOAD FILE IS EMPTY
-                            if (model.PassportUpload == null || model.PassportUpload.ContentLength < 0)
-                            {
-                                msg = "Please select a file, Try again!";
-                                ViewBag.Msg = msg;
-                                return View(model);
-                            }
-                            else if (model.PassportUpload != null && model.PassportUpload.ContentLength > 0 &&
-                                model.PassportUpload.FileName.ToLower().EndsWith("jpg") ||
-                                model.PassportUpload.FileName.ToLower().EndsWith("png") ||
-                                model.PassportUpload.FileName.ToLower().EndsWith("jpeg"))
-                            {
-
-                                //UPLOAD NOT EMPTY
-                                //CHANGE THE PASSPORT NAME
-                                string passName = model.Email.Replace(".", "").Replace("@", "") + Path.GetExtension(model.PassportUpload.FileName);
-
-
-                                string pathx = Server.MapPath("~/Uploads/Passports/" + passName);
-                                model.PassportUpload.SaveAs(pathx);
-
-                                //CONVERT IMAGE OBJECT TO BYTE ARRAY
-                                if (pathx != null)
-                                {
-                                    using (Image img = Image.FromFile(pathx))
-                                    {
-                                        var ms = new MemoryStream();
-
-                                        img.Save(ms, ImageFormat.Jpeg);
-
-                                        var bytes = ms.ToArray();
-
-                                        // NOW SAVE BYTE 
-                                        if (bytes.Length > 0)
-                                        {
-                                            model.Passport = bytes;
-                                            con.ApplicantProfiles.Add(model);
-                                            con.SaveChanges();
-                                            ViewBag.Msg = "User and profile account created successfully!";
-                                            return View();
-                                        }
-                                        else
-                                        {
-                                            msg = "Image conversion failed!";
-                                        }
-                                    }
-                                }
-                                else
-                                    msg = "Applicant Passport Upload counld not be completed successfully" +
-                                        " because, the image renaming failed!";
-
-                                if (System.IO.File.Exists(pathx))
-                                    System.IO.File.Delete(pathx);
-
-                            }
-                            else
-                            {
-                                //IMAGE NOT VALID
-                                msg = "Invalid Image format or Image was not selected!";
-                            }
-                            ViewBag.Msg = msg;
-                            return View(model);
+                            var roleassign = RoleAssignment(user.Id, dbRole.Name);
                         }
                         else
                         {
-                            //AddErrors(result);
-                            msg = "Sorry, User account could not be saved successfully!";
-                        }
-                        ViewBag.Msg = msg;
-                        return View(model);
-                    }
-                    else if (chkUserExist != null && chkApplicantExist == null)
-                    {
-                        //  -   -   ONLY APPLICANTPROFILE IS CREATED
-
-                        ////CHECK IF UPLOAD FILE IS EMPTY
-                        if (model.PassportUpload == null || model.PassportUpload.ContentLength < 0)
-                        {
-                            msg = "Please select a file, Try again!";
-                            ViewBag.Msg = msg;
-                            return View(model);
-                        }
-                        else if (model.PassportUpload != null && model.PassportUpload.ContentLength > 0 &&
-                            model.PassportUpload.FileName.ToLower().EndsWith("jpg") ||
-                            model.PassportUpload.FileName.ToLower().EndsWith("png") ||
-                            model.PassportUpload.FileName.ToLower().EndsWith("jpeg"))
-                        {
-
-                            //UPLOAD NOT EMPTY
-                            //CHANGE THE PASSPORT NAME
-                            string passName = model.Email.Replace(".", "").Replace("@", "") + Path.GetExtension(model.PassportUpload.FileName);
-
-
-                            string pathx = Server.MapPath("~/Uploads/Passports/" + passName);
-                            model.PassportUpload.SaveAs(pathx);
-
-                            //CONVERT IMAGE OBJECT TO BYTE ARRAY
-                            if (pathx != null)
+                            //CREATE ROLE AND ADD USER
+                            IdentityRole newRole = new IdentityRole()
                             {
-                                using (Image img = Image.FromFile(pathx))
-                                {
-                                    var ms = new MemoryStream();
+                                Name = role
+                            };
 
-                                    img.Save(ms, ImageFormat.Jpeg);
+                            con.Roles.Add(newRole);
+                            con.SaveChanges();
 
-                                    var bytes = ms.ToArray();
+                            var roleassign = RoleAssignment(user.Id, newRole.Name);
+                        }
 
-                                    // NOW SAVE BYTE WITH STUDENT REGNO NUMBER
-                                    if (bytes.Length > 0)
-                                    {
-                                        model.Passport = bytes;
-                                        con.ApplicantProfiles.Add(model);
-                                        con.SaveChanges();
-                                        ViewBag.Msg = "User and profile account created successfully!";
-                                        return View();
-                                    }
-                                    else
-                                    {
-                                        msg = "Image conversion failed!";
-                                    }
-                                }
-                            }
-                            else
-                                msg = "Applicant Passport Upload counld not be completed successfully" +
-                                    " because, the image renaming failed!";
+                        model.UserId = user.Id;
 
-                            if (System.IO.File.Exists(pathx))
-                                System.IO.File.Delete(pathx);
+                        if (ModelState.IsValid)
+                        {
+                            con.ApplicantProfiles.Add(model);
+                            con.SaveChanges();
+                            TempData["msg"] = "User and profile account created successfully!";
+                            return RedirectToAction("MyProfile");
                         }
                         else
                         {
-                            //IMAGE NOT VALID
-                            msg = "Invalid Image format or Image was not selected!";
+                            msg = "OOOPS, PLEASE PROVIDE ALL VALUES!";
                         }
-                        ViewBag.Msg = msg;
-                        return View(model);
+
+
                     }
-                    else if (chkUserExist != null && chkApplicantExist != null)
-                    {
-                        //EDIT
-                        var dbObj = con.ApplicantProfiles.SingleOrDefault(o => o.User.Email == model.Email);
-
-                        if (dbObj != null)
-                        {
-                            dbObj.FirstName = model.FirstName;
-                            dbObj.MiddleName = model.MiddleName;
-                            dbObj.SurName = model.SurName;
-                            dbObj.Gender = model.Gender;
-                            dbObj.DOB = model.DOB;
-                            dbObj.Email = model.Email;
-                            dbObj.Phone = model.Phone;
-                            dbObj.LGAOrigin = model.LGAOrigin;
-                            dbObj.StateOrigin = model.StateOrigin;
-                            dbObj.ResidentialCountry = model.ResidentialCountry;
-                            dbObj.PermanentResident = model.PermanentResident;
-                            dbObj.PreferredJobLocation = model.PreferredJobLocation;
-                            dbObj.EmailNotification = model.EmailNotification;
-                            dbObj.Nationality = model.Nationality;
-                            dbObj.Skills = model.Skills;
-                            dbObj.UserId = model.UserId;
-
-                            ////CHECK IF THERE'S NEW PASSPORT
-                            if (model.PassportUpload != null && model.PassportUpload.ContentLength > 0 &&
-                               model.PassportUpload.FileName.ToLower().EndsWith("jpg") ||
-                               model.PassportUpload.FileName.ToLower().EndsWith("png") ||
-                               model.PassportUpload.FileName.ToLower().EndsWith("jpeg"))
-                            {
-
-                                string passName = model.Email.Replace(".", "").Replace("@", "") + Path.GetExtension(model.PassportUpload.FileName);
-
-
-                                string pathx = Server.MapPath("~/Uploads/Passports/" + passName);
-                                model.PassportUpload.SaveAs(pathx);
-
-                                //CONVERT IMAGE OBJECT TO BYTE ARRAY
-                                if (pathx != null)
-                                {
-                                    using (Image img = Image.FromFile(pathx))
-                                    {
-                                        var ms = new MemoryStream();
-
-                                        img.Save(ms, ImageFormat.Jpeg);
-
-                                        var bytes = ms.ToArray();
-
-                                        // NOW SAVE BYTE WITH STUDENT REGNO NUMBER
-                                        if (bytes.Length > 0)
-                                        {
-                                            dbObj.Passport = bytes;
-                                            con.SaveChanges();
-                                            msg = "Applicant profile has been saved successfully!";
-                                            ViewBag.Msg = msg;
-                                            return View();
-                                        }
-                                        else
-                                        {
-                                            msg = "Image conversion failed!";
-                                        }
-                                    }
-                                }
-                                else
-                                    msg = "Applicant Passport Upload counld not be completed successfully" +
-                                        " because, the image renaming failed!";
-
-
-                                if (System.IO.File.Exists(pathx))
-                                    System.IO.File.Delete(pathx);
-
-                                ViewBag.Msg = msg;
-                                return View(model);
-
-                            }
-                            else
-                            {
-                                //  - SAVE WITHOUT NEW PASSPORT
-                                con.SaveChanges();
-                                msg = "Applicant profile updated successfully!";
-                                return RedirectToAction("MyProfile", msg);
-                            }
-
-                        }
-                        else
-                        {
-                            msg = "No record found!";
-                            return RedirectToAction("MyProfile", msg);
-
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    if (ex.InnerException != null)
-                        msg = "TRY AGAIN, IF PERSISTED, CONTACT ADMIN! \n" + ex.InnerException.Message.ToString();
                     else
-                        msg = "TRY AGAIN, IF PERSISTED, CONTACT ADMIN! \n" + ex.Message.ToString();
+                    {
+                        msg = "Sorry, User account could not be created successfully!";
+                    }
+                    ViewBag.Msg = msg;
+                    return View(model);
+                }
+                else if (chkUserExist != null && chkApplicantExist == null)
+                {
+                    //  -   -   ONLY APPLICANTPROFILE IS CREATED
+
+                    model.UserId = chkUserExist.Id;
+                    if (ModelState.IsValid)
+                    {
+                        con.ApplicantProfiles.Add(model);
+                        con.SaveChanges();
+                        msg = "Profile account created successfully!";
+                    }
+                    else
+                        msg = "The provided data did not match required format, please try again later!!";
+                    TempData["msg"] = msg;
+                    return RedirectToAction("MyProfile");
+                }
+                else if (chkUserExist != null && chkApplicantExist != null)
+                {
+                    //EDIT
+                    var dbObj = con.ApplicantProfiles.SingleOrDefault(o => o.User.Email == model.Email);
+
+                    if (dbObj != null)
+                    {
+                        dbObj.FirstName = model.FirstName;
+                        dbObj.MiddleName = model.MiddleName;
+                        dbObj.SurName = model.SurName;
+                        dbObj.Gender = model.Gender;
+                        dbObj.DOB = model.DOB;
+                        dbObj.Email = model.Email;
+                        dbObj.Phone = model.Phone;
+                        dbObj.LGAOrigin = model.LGAOrigin;
+                        dbObj.StateOrigin = model.StateOrigin;
+                        dbObj.ResidentialAddress = model.ResidentialAddress;
+                        dbObj.PreferredJobLocation = model.PreferredJobLocation;
+                        dbObj.EmailNotification = model.EmailNotification;
+                        dbObj.Skills = model.Skills;
+                        dbObj.UserId = model.UserId;
+
+                        con.SaveChanges();
+                        msg = "Profile account updated successfully!";
+                        TempData["msg"] = msg;
+                        return RedirectToAction("MyProfile");
+
+                    }
+                    else
+                    {
+                        msg = "No record found!";
+                        TempData["msg"] = msg;
+                        return RedirectToAction("MyProfile");
+
+                    }
                 }
             }
-            else
+            catch (Exception ex)
             {
-                msg = "OOOPS, PLEASE PROVIDE ALL VALUES!";
+                if (ex.InnerException != null)
+                    msg = "TRY AGAIN, IF PERSISTED, CONTACT ADMIN! \n" + ex.InnerException.Message.ToString();
+                else
+                    msg = "TRY AGAIN, IF PERSISTED, CONTACT ADMIN! \n" + ex.Message.ToString();
             }
 
-            //return Json(msg, JsonRequestBehavior.AllowGet);
-            return RedirectToAction("MyProfile", msg);
+            UtilityHelpers utilityHelpers = new UtilityHelpers();
+            ViewBag.GenderList = utilityHelpers.GetGenders();
+            ViewBag.Msg = msg;
+            return View(model);
         }
 
         [AllowAnonymous]
@@ -360,6 +254,8 @@ namespace Recruitment_Portal_System.Controllers
         {
             ApplicantProfile model = new ApplicantProfile();
             string msg = "";
+
+            UtilityHelpers utilityHelpers = new UtilityHelpers();
 
             try
             {
@@ -378,13 +274,13 @@ namespace Recruitment_Portal_System.Controllers
                         model.Phone = obj.Phone;
                         model.LGAOrigin = obj.LGAOrigin;
                         model.StateOrigin = obj.StateOrigin;
-                        model.ResidentialCountry = obj.ResidentialCountry;
-                        model.PermanentResident = obj.PermanentResident;
+                        model.ResidentialAddress = obj.ResidentialAddress;
                         model.PreferredJobLocation = obj.PreferredJobLocation;
                         model.EmailNotification = obj.EmailNotification;
-                        model.Nationality = obj.Nationality;
                         model.Skills = obj.Skills;
                         model.UserId = obj.UserId;
+
+                        ViewBag.GenderList = utilityHelpers.GetGenders();
 
                         return PartialView("AddEditApplicantProfile", model);
 
@@ -402,23 +298,99 @@ namespace Recruitment_Portal_System.Controllers
             return RedirectToAction("MyProfile", msg);
         }
 
-        //[Authorize(Roles = "SuperAdmin")]
-        //public JsonResult DeleteApplicant(string ID)
-        //{
+        [HttpGet]
+        [Authorize(Roles = "Applicant")]
+        public ActionResult UploadPassport()
+        {
+            return View();
+        }
 
-        //    bool result = false;
-        //    if (ID != null)
-        //    {
-        //        var objDel = con.StateBranches.SingleOrDefault(o => o.Id == ID);
-        //        if (objDel != null)
-        //        {
-        //            con.StateBranches.Remove(objDel);
-        //            con.SaveChanges();
-        //            result = true;
-        //        }
-        //    }
-        //    return Json(result, JsonRequestBehavior.AllowGet);
-        //}
+        [HttpPost]
+        [Authorize(Roles = "Applicant")]
+        [ValidateAntiForgeryToken]
+        public ActionResult UploadPassport(UploadEmployeePassportViewModel model)
+        {
+            try
+            {
+                string msg = "";
+                // CHECK IF IMAGE1 UPLOAD FILE IS EMPTY
+                if (model.PassportUpload == null || model.PassportUpload.ContentLength < 0)
+                {
+                    msg = "Please select a file, Try again!";
+                    ViewBag.Msg = msg;
+
+                    return View();
+                }
+                else if (model.PassportUpload != null && model.PassportUpload.ContentLength > 0 &&
+                    model.PassportUpload.FileName.ToLower().EndsWith("jpg") ||
+                    model.PassportUpload.FileName.ToLower().EndsWith("png"))
+                {
+                    //UPLOAD NOT EMPTY
+                    string email = User.Identity.Name;
+
+                    var user = con.Users.FirstOrDefault(x => x.Email == email);
+
+                    string passName = user.Id + Path.GetExtension(model.PassportUpload.FileName);
+
+                    string pathx = Server.MapPath("~/Uploads/Passports/" + passName);
+                    model.PassportUpload.SaveAs(pathx);
+
+
+                    if (pathx != null)
+                    {
+                        using (Image img = Image.FromFile(pathx))
+                        {
+                            var ms = new MemoryStream();
+
+                            img.Save(ms, ImageFormat.Jpeg);
+
+                            var bytes = ms.ToArray();
+
+                            // NOW SAVE BYTE WITH STUDENT REGNO NUMBER
+                            if (bytes.Length > 0)
+                            {
+
+                                var appl = con.ApplicantProfiles.FirstOrDefault(x => x.UserId == user.Id);
+                                if (appl != null)
+                                {
+                                    appl.Passport = bytes;
+                                    con.SaveChanges();
+                                    ViewBag.Msg = "Passport Upload Completed";
+                                }
+                            }
+                            else
+                            {
+                                ViewBag.Msg = "Image conversion failed!";
+                            }
+                        }
+                    }
+                    else
+                        ViewBag.Msg = "Sorry, Passport Upload counld not be completed successfully" +
+                            " because, the image renaming failed!";
+
+                    if (System.IO.File.Exists(pathx))
+                        System.IO.File.Delete(pathx);
+                }
+            }
+            catch (Exception ex)
+            {
+                if (ex.InnerException.Message == null)
+                {
+                    TempData["Msg"] = "Please copy response and send to admin: \n" + ex.Message.ToString();
+                    ViewBag.Msg = TempData["Msg"].ToString();
+                    return View();
+                }
+                else
+                {
+                    TempData["Msg"] = "Please copy response and send to admin: \n" +
+                                            ex.Message.ToString() + "\n" +
+                                            ex.InnerException.Message.ToString();
+                    ViewBag.Msg = TempData["Msg"].ToString();
+                    return View();
+                }
+            }
+            return RedirectToAction("MyProfile");
+        }
 
         #endregion
 
@@ -538,6 +510,30 @@ namespace Recruitment_Portal_System.Controllers
                 }
             }
             return Json(result, JsonRequestBehavior.AllowGet);
+        }
+        #endregion
+
+
+
+        #region METHOD TO ADD STUDENT INTO ROLE
+        [NonAction]
+        public bool RoleAssignment(string userId, string role)
+        {
+            if (userId == null || role == null)
+            {
+                return false;
+            }
+            else
+            {
+                var UserManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(con));
+
+                var result = UserManager.AddToRole(userId, role);
+                if (result.Succeeded)
+                {
+                    return true;
+                }
+                return false;
+            }
         }
         #endregion
     }

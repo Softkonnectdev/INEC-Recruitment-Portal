@@ -1,0 +1,272 @@
+﻿@model Recruitment_Portal_System.Models.ApplicantProfile
+
+
+@{
+    ViewBag.Title = "User Profile";
+
+
+    var imgx = ViewBag.Passport;
+
+}
+
+@if (ViewBag.Msg != null)
+{
+    <p id="msg" style="display:none">@ViewBag.Msg</p>
+}
+
+
+@if (Model != null)
+{
+
+
+
+    <div class="card">
+        <div class="card-heading">
+            <h4 class="float-r me-3">@Model.SurName &nbsp; @Model.FirstName &nbsp;</h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="text-center">
+
+                        <img class="img-rounded" src="@imgx" width="150" height="150" alt="NO PASSPORT" />
+                        <hr />
+                        <a class="nav-link active" href="@Url.Action("UploadPassport","Applicant")">  <b class="lead">&nbsp; <i class="fa fa-arrow-circle-left"></i> &nbsp; Upload <span class="text-warning">Passport</span></b></a>
+                        <hr />
+                    </div>
+                </div>
+                <br />
+            </div>
+            <div class="row">
+                <h3 class="text-center">Applicant Details</h3>
+
+                @using (Html.BeginForm("CreateProfile", "Applicant", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.HiddenFor(model => model.UserId)
+
+                    <div class="form-horizontal">
+                        <h4>Applicant Profile</h4>
+                        <hr />
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                        <div class="form-group mb-3">
+                            @Html.LabelFor(model => model.SurName, htmlAttributes: new { @class = "control-label  " })
+
+                            @Html.EditorFor(model => model.SurName, new { htmlAttributes = new { @class = "form-control", @required = "required" } })
+                            @Html.ValidationMessageFor(model => model.SurName, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="form-group mb-3">
+                            @Html.LabelFor(model => model.FirstName, htmlAttributes: new { @class = "control-label  " })
+
+                            @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control", @required = "required" } })
+                            @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="form-group mb-3">
+                            @Html.LabelFor(model => model.MiddleName, htmlAttributes: new { @class = "control-label  " })
+
+                            @Html.EditorFor(model => model.MiddleName, new { htmlAttributes = new { @class = "form-control", @required = "required" } })
+                            @Html.ValidationMessageFor(model => model.MiddleName, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="form-group mb-3">
+                            @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label  " })
+
+                            @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control", @required = "required" } })
+                            @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="form-group mb-3">
+                            @Html.LabelFor(model => model.Phone, htmlAttributes: new { @class = "control-label  " })
+
+                            @Html.EditorFor(model => model.Phone, new { htmlAttributes = new { @class = "form-control", @required = "required" } })
+                            @Html.ValidationMessageFor(model => model.Phone, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group mb-3">
+                            @Html.LabelFor(model => model.DOB, htmlAttributes: new { @class = "control-label" })
+
+                            @Html.TextBoxFor(x => x.DOB, new { @class = "form-control", @readonly = "readonly" })
+                            @Html.ValidationMessageFor(model => model.DOB, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="form-group mb-3">
+                            @Html.LabelFor(model => model.Gender, htmlAttributes: new { @class = "control-label" })
+                            @Html.EditorFor(model => model.Gender, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                            @Html.ValidationMessageFor(model => model.Gender, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="form-group mb-3">
+                            @Html.LabelFor(model => model.ResidentialAddress, htmlAttributes: new { @class = "control-label  " })
+                            @Html.EditorFor(model => model.ResidentialAddress, new { htmlAttributes = new { @class = "form-control", @required = "required" } })
+                            @Html.ValidationMessageFor(model => model.ResidentialAddress, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="form-group mb-3">
+                            @Html.LabelFor(model => model.LGAOrigin, htmlAttributes: new { @class = "control-label  " })
+
+                            @Html.EditorFor(model => model.LGAOrigin, new { htmlAttributes = new { @class = "form-control", @required = "required" } })
+                            @Html.ValidationMessageFor(model => model.LGAOrigin, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group mb-3">
+                            @Html.LabelFor(model => model.StateOrigin, htmlAttributes: new { @class = "control-label  " })
+
+                            @Html.EditorFor(model => model.StateOrigin, new { htmlAttributes = new { @class = "form-control", @required = "required" } })
+                            @Html.ValidationMessageFor(model => model.StateOrigin, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group mb-3">
+                            @Html.LabelFor(model => model.Skills, htmlAttributes: new { @class = "control-label  " })
+
+                            @Html.EditorFor(model => model.Skills, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.Skills, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group mb-3">
+                            @Html.LabelFor(model => model.PreferredJobLocation, htmlAttributes: new { @class = "control-label  " })
+
+                            @Html.EditorFor(model => model.PreferredJobLocation, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.PreferredJobLocation, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group mb-3">
+                            @Html.LabelFor(model => model.EmailNotification, htmlAttributes: new { @class = "control-label" })
+
+                            <div class="checkbox">
+                                @Html.EditorFor(model => model.EmailNotification)
+                                @Html.ValidationMessageFor(model => model.EmailNotification, "", new { @class = "text-danger" })
+                            </div>
+
+                        </div>
+
+
+
+                        <div class="d-grid gap-2 col-md-12 mx-auto mt-2">
+                            <input type="submit" value="Create" class="btn btn-primary fw-bold px-3" id="btnSaveUpdate" />
+
+                        </div>
+                    </div>
+                }
+                <!--<h4 class="text-info">Profile</h4>
+    <h5>Full Name</h5>
+    <p><b>@Model.SurName &nbsp; @Model.FirstName &nbsp; @Model.MiddleName</b></p>
+    <h5>Email Address</h5>
+    <p><b>@Model.Email</b></p>
+    <h5>Gender</h5>
+    <p><b>@Model.Gender</b></p>
+    <h5>Contact</h5>
+    <p><b>@Model.Phone</b></p>
+
+    <h5>Date of Birth</h5>
+    <p><b>@Model.DOB.ToString("dd/MM/yyyy")</b></p>
+    <h5>Email Notification</h5>
+    <p><b>@Model.EmailNotification</b></p>
+    <h5>LGA of Origin</h5>
+    <p><b>@Model.LGAOrigin</b></p>
+    <h5>State of Origin</h5>
+    <p><b>@Model.StateOrigin</b></p>
+
+    <h5>Residence</h5>
+    <p><b>@Model.ResidentialAddress</b></p>
+
+    <h5>Preferred Job Location</h5>
+    <p><b>@Model.PreferredJobLocation</b></p>
+
+    <h5>Skills</h5>
+    <p><b>@Model.Skills</b></p>
+
+
+    <h5>Date Created</h5>-->
+                @*<p><b>@Model.CreatedOn.ToString("dd/MM/yyyy")</b></p>*@
+                <!--<p><b>@Model.CreatedOn</b></p>-->
+
+
+                <br />
+
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+
+
+
+}
+else
+{
+    <div class="p-3">
+        <label class="label">NO RECORD FOUND!</label>
+        <hr style="color:gray;" />
+
+    </div>
+}
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js"></script>
+
+<script>
+    $(document).ready(function () {
+
+        var Smsg = $("#msg").text();
+        if (Smsg != "") {
+            alert(Smsg);
+        }
+
+        $("#btnReset").click(function () {
+            $("#Name").val("");
+            $("#Address").val("");
+        })
+
+        $("#btnCancle").click(function () {
+            $("#AddEditModal").modal("hide");
+        })
+
+    })
+
+
+    //var AddEdit = function (id) {
+    //    $("#loaderDiv").show();
+    //    var url = "/Branch/AddEditBranch?ID=" + id; //USED TO SEARCH ENTITY WITH ID
+
+    //    $("#modalBody").load(url, function () {  // LOAD THE CONTENT FROM THE ACTION /ADDEDITRECORD
+    //        $("#loaderDiv").hide();
+    //        $("#AddEditModal").modal("show");
+    //    })
+    //}
+
+
+
+    //var ConfirmDeleteRecord = function (id) {
+    //    $("#ID").val(id);
+    //    $("#DeleteModal").modal("show");
+    //}
+
+
+    //var DeleteRecord = function () {
+
+    //    var Id = $("#ID").val();
+
+    //    $.ajax({
+
+    //        type: "POST",
+    //        url: "/Branch/DeleteBranch",
+    //        data: { ID: Id },
+    //        success: function (result) {
+    //            if (result == true) {
+    //                $("#row_" + Id).remove();
+    //                alert("Record deleted successfully!");
+    //                window.location.href = "/Branch/Index";
+    //            }
+    //            else {
+    //                window.location.href = "/Branch/Index";
+    //            }
+    //        }
+    //    })
+
+
+    //}
+
+</script>

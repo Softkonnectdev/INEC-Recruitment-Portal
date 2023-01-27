@@ -10,7 +10,6 @@ namespace Recruitment_Portal_System.Models
         { get; set; }
 
 
-        [Required(ErrorMessage = "Description is NULL")]
         [DataType(DataType.MultilineText)]
         public string Description
         {

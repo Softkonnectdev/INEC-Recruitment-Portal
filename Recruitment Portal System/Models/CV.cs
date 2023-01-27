@@ -31,6 +31,7 @@ namespace Recruitment_Portal_System.Models
 
         [Required(ErrorMessage = "Cover Page is NULL")]
         [DataType(DataType.MultilineText)]
+        [StringLength(500, ErrorMessage = "Not more than 500 characters!")]
         public string CoverPage
         {
             get; set;

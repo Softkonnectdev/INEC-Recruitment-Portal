@@ -13,13 +13,7 @@ namespace Recruitment_Portal_System.Models
         {
             get; set;
         }
-
-        [Required(ErrorMessage = "Branch Admin ID is NULL")]
-        public string BranchAdminID
-        {
-            get; set;
-        }
-
+                
         [Required(ErrorMessage ="Address is NULL")]
         public string Address
         {

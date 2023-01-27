@@ -10,6 +10,10 @@ namespace Recruitment_Portal_System.Controllers
     {
         public ActionResult Index()
         {
+            if (TempData["Msg"] != null)
+            {
+                ViewBag.Msg = TempData["Msg"].ToString();
+            }
             return View();
         }
 

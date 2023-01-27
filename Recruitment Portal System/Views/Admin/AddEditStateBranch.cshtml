@@ -1,0 +1,103 @@
+﻿
+
+@model Recruitment_Portal_System.Models.StateBranch
+
+
+
+
+<div class="row">
+    <div class="col">
+        <section class="ftco-section" style="padding-top:0px; padding-bottom: 2px;">
+            <div class="row justify-content-center">
+                <div class="login-wrap">
+                    <div class="img" style="background-image: url(/Images/company3.jpg);"></div>
+                    <h3 class="text-center mb-4">
+                        @if (Model.Name != null)
+                        {<span>Update Branch</span>}
+                        else
+                        { <span>Add New Branch</span>}
+                    </h3>
+
+                    <form id="frmStateBranch">
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(model => model.Id)
+
+                        <div class="panel">
+                            
+                            <div class="panel-body">
+                                <div class="form-group mb-3">
+                                    @Html.TextBoxFor(x => x.Name, new { @class = "form-control", @placeholder = "Branch Name" })
+                                    @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                                </div>
+                                
+                                <div class="form-group mb-3">
+                                    @Html.EditorFor(model => model.Address, new { htmlAttributes = new { @class = "form-control", @placeholder = "Branch Address" } })
+                                    @Html.ValidationMessageFor(model => model.Address, "", new { @class = "text-danger" })
+                                </div>
+                                <div class="form-group mb-3">
+                                    @Html.TextBoxFor(x => x.Description, new { @class = "form-control", @placeholder = "Description" })
+                                    @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        </div>
+
+                     
+
+                        <div style="text-align: center;" id="loaderDiv11" class="pt-2">
+                            <img src="~/Images/loadingx.gif" width="80" height="80" class="img img-thumbnail" />
+                        </div>
+
+                        <div class="d-grid gap-2 col-md-12 mx-auto mt-2">
+                            <a href="#" class="btn btn-primary submit fw-bold px-3 fw-bolder" id="btnSaveUpdate">
+                                @if (Model.Name != null)
+                                {<span>Update Branch</span>}
+                                else
+                                { <span>Save New Branch</span>}
+                            </a>
+                        </div>
+
+
+
+                    </form>
+
+                </div>
+            </div>
+        </section>
+    </div>
+
+</div>
+
+
+
+
+
+<script>
+
+    $(document).ready(function () {
+        $("#loaderDiv11").hide();
+
+        $("#btnSaveUpdate").click(function () {
+
+            $("#loaderDiv11").show();
+
+            var frmData = $("#frmStateBranch").serialize();
+            var data = frmData;
+            debugger;
+
+            $.ajax({
+                type: "POST",
+                url: "/Admin/StateBranch",
+                data: data,
+                success: function (result) {
+                    $("#loaderDiv11").hide();
+                    $("#AddEditModal").modal("hide"); //TO HIDE MODAL AFTER SAVING RECORD
+                    if (result.trim != "" || result.trim != null) { alert(result); }
+                    window.location.href = "/Admin/StateBranch";
+                }
+            })
+        })
+
+    })
+</script>
+
+
