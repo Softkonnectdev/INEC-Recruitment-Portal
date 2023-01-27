@@ -177,34 +177,6 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202301191406274_Initial.cs" />
-    <Compile Include="Migrations\202301191406274_Initial.Designer.cs">
-      <DependentUpon>202301191406274_Initial.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202301241348096_Modification1.cs" />
-    <Compile Include="Migrations\202301241348096_Modification1.Designer.cs">
-      <DependentUpon>202301241348096_Modification1.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202301260742478_Modification2.cs" />
-    <Compile Include="Migrations\202301260742478_Modification2.Designer.cs">
-      <DependentUpon>202301260742478_Modification2.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202301260756384_Modification3.cs" />
-    <Compile Include="Migrations\202301260756384_Modification3.Designer.cs">
-      <DependentUpon>202301260756384_Modification3.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202301260918509_Modification4.cs" />
-    <Compile Include="Migrations\202301260918509_Modification4.Designer.cs">
-      <DependentUpon>202301260918509_Modification4.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202301261036568_Modification5.cs" />
-    <Compile Include="Migrations\202301261036568_Modification5.Designer.cs">
-      <DependentUpon>202301261036568_Modification5.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202301271057223_Updates.cs" />
-    <Compile Include="Migrations\202301271057223_Updates.Designer.cs">
-      <DependentUpon>202301271057223_Updates.cs</DependentUpon>
-    </Compile>
     <Compile Include="Migrations\202301271317301_Updates9.cs" />
     <Compile Include="Migrations\202301271317301_Updates9.Designer.cs">
       <DependentUpon>202301271317301_Updates9.cs</DependentUpon>
@@ -514,27 +486,6 @@
     <Content Include="Scripts\jquery-3.4.1.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202301191406274_Initial.resx">
-      <DependentUpon>202301191406274_Initial.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202301241348096_Modification1.resx">
-      <DependentUpon>202301241348096_Modification1.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202301260742478_Modification2.resx">
-      <DependentUpon>202301260742478_Modification2.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202301260756384_Modification3.resx">
-      <DependentUpon>202301260756384_Modification3.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202301260918509_Modification4.resx">
-      <DependentUpon>202301260918509_Modification4.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202301261036568_Modification5.resx">
-      <DependentUpon>202301261036568_Modification5.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202301271057223_Updates.resx">
-      <DependentUpon>202301271057223_Updates.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202301271317301_Updates9.resx">
       <DependentUpon>202301271317301_Updates9.cs</DependentUpon>
     </EmbeddedResource>
