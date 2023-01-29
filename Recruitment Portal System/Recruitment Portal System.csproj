@@ -172,6 +172,7 @@
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\ApplicantController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\InecController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\RoleController.cs" />
     <Compile Include="Global.asax.cs">
@@ -180,6 +181,10 @@
     <Compile Include="Migrations\202301271317301_Updates9.cs" />
     <Compile Include="Migrations\202301271317301_Updates9.Designer.cs">
       <DependentUpon>202301271317301_Updates9.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202301281417259_addedProperty.cs" />
+    <Compile Include="Migrations\202301281417259_addedProperty.Designer.cs">
+      <DependentUpon>202301281417259_addedProperty.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ApplicantWorkExperience.cs" />
@@ -467,6 +472,9 @@
     <Content Include="Views\Role\RoleRequest.cshtml" />
     <Content Include="Views\Role\UserRoles.cshtml" />
     <Content Include="Views\Applicant\CreateProfile.cshtml" />
+    <Content Include="Views\Inec\Details.cshtml" />
+    <Content Include="Views\Inec\Index.cshtml" />
+    <Content Include="Views\Inec\ApplyNow.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -488,6 +496,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\202301271317301_Updates9.resx">
       <DependentUpon>202301271317301_Updates9.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202301281417259_addedProperty.resx">
+      <DependentUpon>202301281417259_addedProperty.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -45,6 +45,10 @@ namespace Recruitment_Portal_System.Models
             get; set;
         }
 
+        public bool Status
+        {
+            get; set;
+        }
 
         [Required(ErrorMessage = "Salary is NULL")]
         [DataType(DataType.Currency)]

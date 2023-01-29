@@ -1,0 +1,68 @@
+﻿@model Recruitment_Portal_System.Models.Job
+
+@{
+    ViewBag.Title = Model.Title + " - Details";
+}
+
+@if (Model != null)
+{
+    <div class="limiter">
+        <div class="container-login100">
+            <div class="wrap-login100">
+                <div class="login100-pic js-tilt" data-tilt>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel panel-success">
+                            <div class="panel-heading">
+                                <h3>@Model.Title - (@Model.Salary.ToString("c", ViewBag.CurrencyFmt))</h3>
+                            </div>
+                            <div class="panel-body">
+
+                                <div class="text-center">
+
+                                    <img class="img-rounded" src="~/Images/inec6.jpg" width="150" height="150" />
+
+
+                                </div>
+                                <h3 class="text-light bg-success p-2">Job Description</h3>
+                                <h5 class="p-3">@Model.Description</h5>
+                                <hr />
+                                <h3 class="text-light bg-success p-2">Job Type</h3>
+                                <h5 class="p-3">@Model.JobType</h5>
+                                <hr />
+                                <h3 class="text-light bg-success p-2">
+                                    Posted on
+                                    <span class="float-r">
+                                        Status
+                                    </span>
+                                </h3>
+                                <h5 class="p-3">
+                                    @Model.CreatedAt.ToString("ddd-dd/MMM/yyyy")
+                                    <span class="float-r">
+                                        @if (Model.Status)
+                                        {
+                                            <span class="">Available</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="">Not Available</span>
+                                        }
+                                    </span>
+                                </h5>
+                                <hr />
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+}
+

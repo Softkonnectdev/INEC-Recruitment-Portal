@@ -296,56 +296,58 @@ namespace Recruitment_Portal_System.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public JsonResult Job(Job model)
-         {
+        {
             string msg = "";
 
-      
-                var dbObj = con.Jobs.FirstOrDefault(o => o.Id == model.Id);
-                try
-                {
-                    if (dbObj != null)
-                    {
-                        dbObj.Title = model.Title;
-                        dbObj.JobCategoryID = model.JobCategoryID ?? dbObj.JobCategoryID;
-                        dbObj.JobStateBranchID = model.JobStateBranchID ?? dbObj.JobStateBranchID;
-                        dbObj.JobType = model.JobType ?? dbObj.JobType;
-                        dbObj.Description = model.Description;
-                        dbObj.Salary = model.Salary;
-                        con.SaveChanges();
-                        msg = "Job has been update successfully!";
-                    }
-                    else
-                    {
 
-                        Job objJob = new Job()
-                        {
-                            Title = model.Title,
-                            JobCategoryID = model.JobCategoryID,
-                            JobStateBranchID = model.JobStateBranchID,
-                            JobType = model.JobType,
-                            Description = model.Description,
-                            Salary = model.Salary
-                        };
-                        if (ModelState.IsValid)
-                        {
-                            con.Jobs.Add(objJob);
-                            con.SaveChanges();
-                            msg = "Job has been saved successfully!";
-                        }
-                        else
-                        {
-                            msg = "OOOPS, PLEASE PROVIDE ALL VALUES!";
-                        }
+            var dbObj = con.Jobs.FirstOrDefault(o => o.Id == model.Id);
+            try
+            {
+                if (dbObj != null)
+                {
+                    dbObj.Title = model.Title;
+                    dbObj.JobCategoryID = model.JobCategoryID ?? dbObj.JobCategoryID;
+                    dbObj.JobStateBranchID = model.JobStateBranchID ?? dbObj.JobStateBranchID;
+                    dbObj.JobType = model.JobType ?? dbObj.JobType;
+                    dbObj.Description = model.Description;
+                    dbObj.Salary = model.Salary;
+                    dbObj.Status = true;
+                    con.SaveChanges();
+                    msg = "Job has been update successfully!";
+                }
+                else
+                {
+
+                    Job objJob = new Job()
+                    {
+                        Title = model.Title,
+                        JobCategoryID = model.JobCategoryID,
+                        JobStateBranchID = model.JobStateBranchID,
+                        JobType = model.JobType,
+                        Description = model.Description,
+                        Salary = model.Salary,
+                        Status = model.Status
+                    };
+                    if (ModelState.IsValid)
+                    {
+                        con.Jobs.Add(objJob);
+                        con.SaveChanges();
+                        msg = "Job has been saved successfully!";
+                    }
+                    else
+                    {
+                        msg = "OOOPS, PLEASE PROVIDE ALL VALUES!";
                     }
                 }
-                catch (Exception ex)
-                {
-                    if (ex.InnerException != null)
-                        msg = "TRY AGAIN, IF PERSISTED, CONTACT ADMIN! \n" + ex.InnerException.Message.ToString();
-                    else
-                        msg = "TRY AGAIN, IF PERSISTED, CONTACT ADMIN! \n" + ex.Message.ToString();
-                }
-           
+            }
+            catch (Exception ex)
+            {
+                if (ex.InnerException != null)
+                    msg = "TRY AGAIN, IF PERSISTED, CONTACT ADMIN! \n" + ex.InnerException.Message.ToString();
+                else
+                    msg = "TRY AGAIN, IF PERSISTED, CONTACT ADMIN! \n" + ex.Message.ToString();
+            }
+
             return Json(msg, JsonRequestBehavior.AllowGet);
         }
 
@@ -363,6 +365,7 @@ namespace Recruitment_Portal_System.Controllers
                         model.Id = obj.Id;
                         model.Title = obj.Title;
                         model.Description = obj.Description;
+                        model.Status = obj.Status;
                         model.Salary = obj.Salary;
 
                     }

@@ -1,0 +1,82 @@
+﻿@model Recruitment_Portal_System.Models.JobApplication
+
+@{
+    ViewBag.Title = "Apply Now";
+}
+
+<div class="row">
+    <div class="col">
+        <section class="ftco-section" style="padding-top:0px; padding-bottom: 2px;">
+            <div class="row justify-content-center">
+                <div class="login-wrap">
+                    <div class="img" style="background-image: url(/Images/INEC3.png);"></div>
+                    <h3 class="text-center mb-4">
+                        INEC - Job Application
+                    </h3>
+                    <hr />
+                    @using (Html.BeginForm("ApplyNow", "Inec", FormMethod.Post))
+                    {
+                        @Html.AntiForgeryToken()
+
+                        <div class="form-horizontal">
+                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                            @Html.HiddenFor(x => x.ApplicantID)
+                            @Html.HiddenFor(x => x.JobID)
+                            <div class="form-group mb-3">
+                                @Html.LabelFor(model => model.ApplicantCoverPage, htmlAttributes: new { @class = "control-label  " })
+
+                                @Html.EditorFor(model => model.ApplicantCoverPage, new { htmlAttributes = new { @class = "form-control", @required = "required" } })
+                                @Html.ValidationMessageFor(model => model.ApplicantCoverPage, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="d-grid gap-2 col-md-12 mx-auto mt-2">
+                                <input type="submit" value="Submit Application" class="btn btn-primary fw-bold px-3" id="btnSubmit" />
+
+                            </div>
+
+                            <div style="text-align: center;" id="loaderDivLog" class="pt-2">
+                                <img src="~/Images/loadingx.gif" width="80" height="80" style="border-radius: 50%;" class="img img-thumbnail" />
+                            </div>
+
+                        </div>
+                    }
+
+                </div>
+            </div>
+        </section>
+    </div>
+
+</div>
+
+<script src=" https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js"></script>
+
+<script>
+
+
+
+    $(document).ready(function () {
+        $("#loaderDivLog").hide();
+
+
+        var msg = $("#msg").text();
+
+        if (msg != null && msg != "") {
+            alert(msg);
+        }
+
+        $("#btnSubmit").click(function () {
+
+            let coverPage = $("#CoverPage").val();
+            var coverPageCounter = coverPage.Count();
+            debugger;
+
+            if (coverPageCounter > 100)
+                $("#loaderDivLog").show();
+            else {
+                alert("Please ensure your cover page is more than 100 characters, Try again later!");
+                window.location.href = "/Inec/Index";
+            }
+
+        });
+    });
+
+</script>

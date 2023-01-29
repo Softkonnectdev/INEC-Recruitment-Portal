@@ -103,12 +103,27 @@
 
                         @if (User.IsInRole("Admin"))
                         {
-
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle p-2" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     Admin Manager
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-dark">
+
+                                    <li class="dropdown-header fw-bolder p-2 mt-2 fw-bold ">Role Management</li>
+
+                                    <li>
+                                        <hr class="dropdown-header fw-bolder text-primary fw-bolder text-primary">
+                                    </li>
+                                    <li><a class="dropdown-item" href="@Url.Action("Index","Role")">Available Roles</a></li>
+                                    <li><a class="dropdown-item" href="@Url.Action("Create","Role")">New Role</a></li>
+                                    <li><a class="dropdown-item" href="@Url.Action("UserRoles","Role")">User in Role</a></li>
+                                    <li><a class="dropdown-item" href="@Url.Action("RoleAssignment","Role")">Role Assignment</a></li>
+
+                                    <li class="dropdown-header fw-bolder p-2 mt-2 fw-bold ">App Manager</li>
+
+                                    <li>
+                                        <hr class="dropdown-header fw-bolder text-primary fw-bolder text-primary">
+                                    </li>
                                     <li><a class="dropdown-item" href="@Url.Action("JobCategory","Admin")">Job Category</a></li>
                                     <li><a class="dropdown-item" href="@Url.Action("StateBranch","Admin")">State Branch</a></li>
                                     <li><a class="dropdown-item" href="@Url.Action("Job","Admin")">Job</a></li>
@@ -119,8 +134,6 @@
                                 </ul>
                             </li>
 
-
-
                         }
                         @if (User.IsInRole("Applicant"))
                         {
@@ -130,135 +143,21 @@
                                     My Dashboard
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-dark">
+                                    <li class="dropdown-header fw-bolder p-2 mt-2 fw-bold ">User Manager</li>
+
+                                    <li>
+                                        <hr class="dropdown-header fw-bolder text-primary fw-bolder text-primary">
+                                    </li>
                                     <li><a class="dropdown-item" href="@Url.Action("MyProfile","Applicant")">My Profile</a></li>
                                 </ul>
                             </li>
 
                         }
-                        @if (User.IsInRole("InstitutionSupervisor"))
-                        {
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle p-2" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Institution Supervisor
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-dark">
-                                    <li><a class="dropdown-item" href="@Url.Action("InstitutionSupervisor","Dashboard")">Dashboard</a></li>
-                                </ul>
-                            </li>
 
-
-
-                        }
-                        @if (User.IsInRole("IndustrialSupervisor"))
-                        {
-
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle p-2" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Institution Supervisor
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-dark">
-                                    <li><a class="dropdown-item" href="@Url.Action("ITFUpload","IndustrialSupervisor")">ITF Upload</a></li>
-                                    <li><a class="dropdown-item" href="@Url.Action("Logbook","IndustrialSupervisor")">Logbook Comment</a></li>
-                                    <li><a class="dropdown-item" href="@Url.Action("Company","Dashboard")">Dashboard</a></li>
-                                </ul>
-                            </li>
-                        }
-                        @if (User.IsInRole("Student"))
-                        {
-
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle p-2" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Student
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-dark">
-                                    <li><a class="dropdown-item" href="@Url.Action("Student","Dashboard")">Dashboard</a></li>
-                                </ul>
-                            </li>
-
-                        }
-                        @if (User.IsInRole("ITFCoordinator"))
-                        {
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle p-2" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    ITF Coordinator
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-dark">
-                                    <li><a class="dropdown-item" href="@Url.Action("ITFBranch","Dashboard")">Dashboard</a></li>
-                                </ul>
-                            </li>
-
-
-
-                        }
-                        @if (User.IsInRole("SuperAdmin"))
-                        {
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle p-2" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="fa fa-superpowers text-warning"></i> Administrator Control
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-dark">
-                                    <li><a class="dropdown-item" href="@Url.Action("Index","Role")">Available Roles</a></li>
-                                    <li><a class="dropdown-item" href="@Url.Action("Create","Role")">New Role</a></li>
-                                    <li><a class="dropdown-item" href="@Url.Action("UserRoles","Role")">User in Role</a></li>
-                                    <li><a class="dropdown-item" href="@Url.Action("RoleAssignment","Role")">Role Assignment</a></li>
-                                    <li>
-                                        <hr class="dropdown-divider">
-                                    </li>
-
-                                    <li class="dropdown-header fw-bolder text-primary">Institution ITF</li>
-                                    <li><a class="dropdown-item" href="@Url.Action("UploadStudent","ITF")">IT Student Upload</a></li>
-                                    <li><a class="dropdown-item" href="@Url.Action("StudentApplication","ITF")">Institution IT Student</a></li>
-
-                                    <li><a class="dropdown-item" href="@Url.Action("Result","Utility")">Result</a></li>
-
-
-                                    <li>
-                                        <hr class="dropdown-divider">
-                                    </li>
-                                    <li class="dropdown-header fw-bolder text-primary">National ITF</li>
-                                    <li><a class="dropdown-item" href="@Url.Action("Index","ITF")">ITF Branch</a></li>
-                                    <li><a class="dropdown-item" href="@Url.Action("ITF","Dashboard")">Dashboard</a></li>
-                                    <li><a class="dropdown-item" href="@Url.Action("ITFRegister","ITF")">Branch IT Students</a></li>
-
-
-                                    <li>
-                                        <hr class="dropdown-divider">
-                                    </li>
-                                    <li class="dropdown-header fw-bolder text-primary">Industrial Supervisor</li>
-                                    <li><a class="dropdown-item" href="@Url.Action("ITFUpload","IndustrialSupervisor")">ITF Upload</a></li>
-                                    <li><a class="dropdown-item" href="@Url.Action("Logbook","IndustrialSupervisor")">Logbook Comment</a></li>
-
-                                    <li>
-                                        <hr class="dropdown-divider">
-                                    </li>
-                                    <li class="dropdown-header fw-bolder text-primary fw-bolder text-primary">Other Management</li>
-                                    <li><a class="dropdown-item" href="@Url.Action("GeneratedEmails","Utility")">Generated Mails</a></li>
-                                    <li><a class="dropdown-item" href="@Url.Action("GeneratedOTPs","Utility")">Generated OTPs</a></li>
-                                    <li><a class="dropdown-item" href="@Url.Action("Ticket","Utility")">Tickets</a></li>
-                                    <li><a class="dropdown-item" href="@Url.Action("MarathonLogApproval","Utility")">Marathon Log Approval</a></li>
-                                    <li><a class="dropdown-item" href="@Url.Action("UploadLogbooks","Utility")">Manual Log</a></li>
-                                    <li><a class="dropdown-item" href="@Url.Action("AllLogs","Utility")">Logs</a></li>
-                                    <li><a class="dropdown-item" href="@Url.Action("Modify","Utility")">Change Log Date</a></li>
-
-                                </ul>
-                            </li>
-                        }
-
-
-                        <li class="dropdown-header fw-bolder p-2 mt-2 fw-bold ">Stake Holders</li>
-                        <li class="nav-item"><a class="nav-link" href="@Url.Action("Index","Company")"><i class="fa fa-industry p-2 text-warning"></i>Company</a></li>
-                        <li class="nav-item"><a class="nav-link" href="@Url.Action("Index","Institution")"><i class="fa fa-institution p-2 text-warning"></i>Institutions</a></li>
-                        <li class="nav-item"><a class="nav-link" href="@Url.Action("Index","ITF")"><i class="fa fa-industry p-2 text-warning"></i>ITF Branch</a></li>
+                        <li class="nav-item"><a class="nav-link" href="@Url.Action("Index","Inec")"><i class="fa fa-industry p-2 text-warning"></i>Jobs</a></li>
                         <li class="nav-item"><a class="nav-link" href="@Url.Action("About","Home")"><i class="fa fa-sticky-note-o p-2 text-warning"></i>How it Work</a></li>
 
-                        <li class="dropdown-header fw-bolder p-2 mt-2 fw-bolder ">Account Management</li>
 
-                        @if (User.Identity.IsAuthenticated)
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link" href="@Url.Action("RoleRequest","Role")"><i class="fa fa-level-up p-2 text-warning"></i> User Role Request</a>
-                            </li>
-                        }
                     </ul>
 
                     @Html.Partial("_LoginPartial")
