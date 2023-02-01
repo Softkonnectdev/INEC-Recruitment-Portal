@@ -311,7 +311,8 @@ namespace Recruitment_Portal_System.Controllers
                     dbObj.JobType = model.JobType ?? dbObj.JobType;
                     dbObj.Description = model.Description;
                     dbObj.Salary = model.Salary;
-                    dbObj.Status = true;
+                    dbObj.LookingFor = model.LookingFor;
+                    dbObj.Status = model.Status;
                     con.SaveChanges();
                     msg = "Job has been update successfully!";
                 }
@@ -326,7 +327,8 @@ namespace Recruitment_Portal_System.Controllers
                         JobType = model.JobType,
                         Description = model.Description,
                         Salary = model.Salary,
-                        Status = model.Status
+                        LookingFor = model.LookingFor,
+                        Status = model.Status,
                     };
                     if (ModelState.IsValid)
                     {
@@ -367,6 +369,7 @@ namespace Recruitment_Portal_System.Controllers
                         model.Description = obj.Description;
                         model.Status = obj.Status;
                         model.Salary = obj.Salary;
+                        model.LookingFor = obj.LookingFor;
 
                     }
                 }
@@ -402,6 +405,84 @@ namespace Recruitment_Portal_System.Controllers
             }
             return Json(result, JsonRequestBehavior.AllowGet);
         }
+        #endregion
+
+        #region VIEW APPLICATION AND SHORTLISTED CANDIDATE
+
+        [HttpGet]
+        public ActionResult JobApplication(string id = null)
+        {
+            if (id == null)
+            {
+                ViewBag.Msg = "Please the selected job has no ID!";
+                return RedirectToAction("Job");
+            }
+            var jobApp = con.JobApplications.Where(x => x.JobID == id).ToList();
+            if (jobApp.Count > 0)
+            {
+                ViewBag.JobTitle = jobApp.FirstOrDefault().Job.Title;
+                return View(jobApp);
+            }
+            ViewBag.Msg = "Please the selected job has no Job Application at the moment, try again later!";
+            return RedirectToAction("Job");
+        }
+
+        [HttpGet]
+        public ActionResult JobShortList(string id = null)
+        {
+            if (id == null)
+            {
+                ViewBag.Msg = "Please the selected job has no ID!";
+                return RedirectToAction("Job");
+            }
+            var shortlisted = con.ShortListedCandidates.Where(x => x.JobID == id).ToList();
+            if (shortlisted.Count > 0)
+            {
+                ViewBag.JobID = id;
+                return View(shortlisted);
+            }
+            ViewBag.Msg = "Please the selected job has no shortlisted candidate at the moment, try again later!";
+            return RedirectToAction("Job");
+        }
+
+        public JsonResult SceduleInterview(string ID = null)
+        {
+            string msg = "";
+
+            if (ID == null)
+            {
+                msg = "Invalid ID!";
+                return Json(msg, JsonRequestBehavior.AllowGet);
+            }
+            var candidates = con.ShortListedCandidates.Where(x => x.JobID == ID).ToList();
+            if (candidates.Count > 0)
+            {
+                foreach (var item in candidates)
+                {
+                    //SEND EMAIL HERE WHEN EMAIL SERVICE IS AVAILABLE
+                    msg += "Interview mail has been sent to " + item.ApplicantEmail + ".\n";
+                }
+                
+            }
+            return Json(msg, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult RemoveCandidate(string ID)
+        {
+            bool result = false;
+            if (ID != null)
+            {
+                var objDel = con.ShortListedCandidates.SingleOrDefault(o => o.Id == ID);
+                if (objDel != null)
+                {
+                    con.ShortListedCandidates.Remove(objDel);
+                    con.SaveChanges();
+                    result = true;
+                }
+            }
+            return Json(result, JsonRequestBehavior.AllowGet);
+        }
+
         #endregion
     }
 }

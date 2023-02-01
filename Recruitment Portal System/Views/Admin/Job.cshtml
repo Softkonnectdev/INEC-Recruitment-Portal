@@ -52,19 +52,25 @@
                             <th>Title</th>
                             <th>Category</th>
                             <th>Address</th>
-                            <th>Type</th>
                             <th>Posted On</th>
                             <th>Salary</th>
+                            <th>Applications</th>
+                            <th>Short Listed Candidates</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
+                        <tr id="row_@job.Id">
                             <td> @job.Title </td>
                             <td> @job.JobCategory.Title </td>
                             <td> @job.JobBranchState.Address</td>
-                            <td> @job.JobType</td>
                             <td> @job.CreatedAt.ToString("HH:mm - dd/MM/yyyy")</td>
                             <td> @job.Salary.ToString("c", ViewBag.CurrencyFmt)</td>
+                            <td>
+                                <a href="@Url.Action("JobApplication", "Admin", new { @id = job.Id })" class="text-danger">View Application</a>
+                            </td>
+                            <td>
+                                <a href="@Url.Action("JobShortList", "Admin", new { @id = job.Id })" class="text-danger">Shortlisted Candidates</a>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -177,13 +183,10 @@
         })
     }
 
-
-
     var ConfirmDeleteRecord = function (id) {
         $("#ID").val(id);
         $("#DeleteModal").modal("show");
     }
-
 
     var DeleteRecord = function () {
 

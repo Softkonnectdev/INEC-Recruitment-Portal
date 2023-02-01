@@ -3,7 +3,7 @@ using System.Web;
 
 namespace Recruitment_Portal_System.Models
 {
-    public class UploadEmployeePassportViewModel
+    public class UploadPassportViewModel
     {
         public string PassportUrl { get; set; }
         [Required]

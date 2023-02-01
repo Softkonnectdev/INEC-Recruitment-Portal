@@ -1,0 +1,91 @@
+﻿
+
+@model Recruitment_Portal_System.Models.JobApplication
+
+
+
+
+<div class="row">
+    <div class="col">
+        <section class="ftco-section" style="padding-top:0px; padding-bottom: 2px;">
+            <div class="row justify-content-center">
+                <div class="login-wrap">
+                    <div class="img" style="background-image: url(/Images/job4.png);"></div>
+                    <h3 class="text-center mb-4">
+                        <span>Submit Job Application</span>
+                    </h3>
+
+                    <form id="frmJobApp">
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(model => model.ApplicantID)
+                        @Html.HiddenFor(model => model.JobID)
+
+                        <div class="panel">
+
+                            <div class="panel-body">
+                                <div class="form-group mb-3">
+                                    <label class="label">Cover Page</label>
+                                    @Html.EditorFor(model => model.ApplicantCoverPage, new { htmlAttributes = new { @class = "form-control", @required = "required", @placeholder = "Enter you cover page here..." } })
+                                    @Html.ValidationMessageFor(model => model.ApplicantCoverPage, "", new { @class = "text-danger" })
+                                </div>
+
+                            </div>
+                        </div>
+
+
+
+                        <div style="text-align: center;" id="loaderDiv1" class="pt-2">
+                            <img src="~/Images/loadingx.gif" width="80" height="80" class="img img-thumbnail" />
+                        </div>
+
+                        <div class="d-grid gap-2 col-md-12 mx-auto mt-2">
+                            <a href="#" class="btn btn-primary submit fw-bold px-3 fw-bolder" id="btnSaveUpdate">
+                                <span>Apply Now</span>
+                            </a>
+                        </div>
+
+
+
+                    </form>
+
+                </div>
+            </div>
+        </section>
+    </div>
+
+</div>
+
+
+
+
+
+<script>
+
+    $(document).ready(function () {
+        $("#loaderDiv1").hide();
+
+        $("#btnSaveUpdate").click(function () {
+
+            $("#loaderDiv1").show();
+
+            var frmData = $("#frmJobApp").serialize();
+            var data = frmData;
+            debugger;
+
+            $.ajax({
+                type: "POST",
+                url: "/Inec/ApplyNow",
+                data: data,
+                success: function (result) {
+                    $("#loaderDiv1").hide();
+                    $("#AddEditModal").modal("hide"); //TO HIDE MODAL AFTER SAVING RECORD
+                    if (result.trim != "" || result.trim != null) { alert(result); }
+                    window.location.href = "/Inec/Index";
+                }
+            })
+        })
+
+    })
+</script>
+
+

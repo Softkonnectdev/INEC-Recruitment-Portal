@@ -7,13 +7,13 @@ namespace Recruitment_Portal_System.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.2.0-61023")]
-    public sealed partial class addedProperty : IMigrationMetadata
+    public sealed partial class Modification : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(addedProperty));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(Modification));
         
         string IMigrationMetadata.Id
         {
-            get { return "202301281417259_addedProperty"; }
+            get { return "202302011002576_Modification"; }
         }
         
         string IMigrationMetadata.Source

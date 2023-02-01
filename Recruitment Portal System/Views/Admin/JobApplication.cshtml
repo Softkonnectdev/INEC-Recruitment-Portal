@@ -1,0 +1,53 @@
+﻿@model IEnumerable<Recruitment_Portal_System.Models.JobApplication>
+
+@{
+    ViewBag.Title = "JobApplication";
+}
+
+<div class="limiter">
+    <div class="container-login100">
+        <div class="wrap-login100">
+            <div class="login100-pic js-tilt" data-tilt>
+                <img src="~/Images/job3.png" alt="IMG">
+            </div>
+
+            <div id="guideBucket" class="m-2 text-center">
+                <h2>
+                    <b> (@ViewBag.JobTitle)</b>
+                    <br />
+                    Job Application
+                </h2>
+            </div>
+
+            <table class="table">
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.CreatedAt)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.ApplicantProfile.Email)
+                    </th>
+
+                    <th></th>
+                </tr>
+
+                @foreach (var item in Model)
+                {
+                    <tr id="row_@item.Id">
+                        <td>
+                            @Html.DisplayFor(modelItem => item.CreatedAt)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ApplicantProfile.Email)
+                        </td>
+
+                        <td>
+                            <a href="@Url.Action("DownloadCV", "Applicant", new { @id = item.ApplicantID  })" class="text-danger"><span class="fa fa-2x fa-download"></span>  </a>
+                        </td>
+                    </tr>
+                }
+
+            </table>
+        </div>
+    </div>
+</div>

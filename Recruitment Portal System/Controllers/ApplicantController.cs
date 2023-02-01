@@ -1,13 +1,15 @@
-﻿using Microsoft.AspNet.Identity;
+﻿using iTextSharp.text.pdf;
+using iTextSharp.text.pdf.parser;
+using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using Recruitment_Portal_System.Models;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -58,7 +60,6 @@ namespace Recruitment_Portal_System.Controllers
             }
         }
 
-
         #region      Applicant CRUD
 
         [Authorize(Roles = "Applicant")]
@@ -97,7 +98,7 @@ namespace Recruitment_Portal_System.Controllers
                         };
                         UtilityHelpers utilityHelpers = new UtilityHelpers();
                         ViewBag.GenderList = utilityHelpers.GetGenders();
-                        return View("CreateProfile",newApplicant);
+                        return View("CreateProfile", newApplicant);
                     }
                 }
                 else
@@ -170,7 +171,10 @@ namespace Recruitment_Portal_System.Controllers
                         }
                         else
                         {
+                            UtilityHelpers utility = new UtilityHelpers();
+                            ViewBag.GenderList = utility.GetGenders();
                             msg = "OOOPS, PLEASE PROVIDE ALL VALUES!";
+                            return View(model);
                         }
 
 
@@ -308,7 +312,7 @@ namespace Recruitment_Portal_System.Controllers
         [HttpPost]
         [Authorize(Roles = "Applicant")]
         [ValidateAntiForgeryToken]
-        public ActionResult UploadPassport(UploadEmployeePassportViewModel model)
+        public ActionResult UploadPassport(UploadPassportViewModel model)
         {
             try
             {
@@ -330,7 +334,7 @@ namespace Recruitment_Portal_System.Controllers
 
                     var user = con.Users.FirstOrDefault(x => x.Email == email);
 
-                    string passName = user.Id + Path.GetExtension(model.PassportUpload.FileName);
+                    string passName = user.Id + System.IO.Path.GetExtension(model.PassportUpload.FileName);
 
                     string pathx = Server.MapPath("~/Uploads/Passports/" + passName);
                     model.PassportUpload.SaveAs(pathx);
@@ -392,130 +396,309 @@ namespace Recruitment_Portal_System.Controllers
             return RedirectToAction("MyProfile");
         }
 
-        #endregion
-
-        #region      JOB CATEGORY CRUD
 
         [HttpGet]
-        public ActionResult JobCategory(string Msg)
+        [Authorize(Roles = "Applicant")]
+        public ActionResult UploadCV()
         {
+            return View();
+        }
 
-            if (Msg != null)
-            {
-                ViewBag.Msg = Msg.ToString();
-            }
-
+        [HttpPost]
+        [Authorize(Roles = "Applicant")]
+        [ValidateAntiForgeryToken]
+        public ActionResult UploadCV(UploadCVViewModel model)
+        {
             try
             {
-                var allJobCategory = con.JobCategories.ToList();
-                if (allJobCategory != null && allJobCategory.Count > 0)
+                string msg = "";
+                // CHECK IF IMAGE1 UPLOAD FILE IS EMPTY
+                if (model.CVUpload == null || model.CVUpload.ContentLength < 0 && model.CoverPage.Count() > 100)
                 {
-                    ViewBag.AllJobsCategories = allJobCategory;
-                    ViewBag.JobCategoryCount = allJobCategory.Count();
+                    msg = "Please select a file, Try again!";
+                    ViewBag.Msg = msg;
+
+                    return View();
+                }
+                else if (model.CVUpload != null && model.CVUpload.ContentLength > 0 &&
+                    model.CVUpload.FileName.ToLower().EndsWith("pdf"))
+                {
+                    //UPLOAD NOT EMPTY
+                    string email = User.Identity.Name;
+
+                    var user = con.Users.FirstOrDefault(x => x.Email == email);
+
+                    string passName = user.Id + System.IO.Path.GetExtension(model.CVUpload.FileName);
+
+                    string pathx = Server.MapPath("~/Uploads/CV/" + passName);
+                    model.CVUpload.SaveAs(pathx);
+
+
+                    Stream str = model.CVUpload.InputStream;
+                    BinaryReader Br = new BinaryReader(str);
+                    Byte[] FileDet = Br.ReadBytes((Int32)str.Length);
+
+                    string cvText = GetTextFromPDF(pathx);
+
+                    //POPULATE APPLICANT CV TABLE
+                    var appCv = new CV()
+                    {
+                        ApplicantID = user.Id,
+                        FileContent = FileDet,
+                        CoverPage = model.CoverPage,
+                        CVText = cvText
+                    };
+
+
+                    // CHECK IF RECORD EXIST WITH SAME APPLICANT
+                    var cvBefore = con.CVs.FirstOrDefault(x => x.ApplicantID == user.Id);
+                    if (cvBefore != null)
+                    {
+                        //UPDATE
+                        cvBefore.CoverPage = model.CoverPage ?? cvBefore.CoverPage;
+                        cvBefore.FileContent = FileDet;
+                        cvBefore.CVText = cvText;
+                    }
+                    else
+                        con.CVs.Add(appCv);
+
+                    int isSaved = con.SaveChanges();
+                    if (isSaved > 0)
+                    {
+                        TempData["Msg"] = "CV uploaded ssuccessfully!";
+                        return RedirectToAction("Index", "Inec");
+
+                    }
+
+                    if (System.IO.File.Exists(pathx))
+                        System.IO.File.Delete(pathx);
+                }
+                else
+                {
+                    msg = "Please select pdf file only, Try again!";
+                    ViewBag.Msg = msg;
+
+                    return View();
                 }
             }
             catch (Exception ex)
             {
-                ViewBag.msg = Session["csmsg"].ToString() + " " + ex.Message.ToString();
+                if (ex.InnerException.Message == null)
+                {
+                    TempData["Msg"] = "Please copy response and send to admin: \n" + ex.Message.ToString();
+                    ViewBag.Msg = TempData["Msg"].ToString();
+                    return View();
+                }
+                else
+                {
+                    TempData["Msg"] = "Please copy response and send to admin: \n" +
+                                            ex.Message.ToString() + "\n" +
+                                            ex.InnerException.Message.ToString();
+                    ViewBag.Msg = TempData["Msg"].ToString();
+                    return View();
+                }
+            }
+            return RedirectToAction("MyProfile");
+        }
+
+
+        [HttpGet]
+        public FileResult DownloadCV(string id)
+        {
+            if (id != null)
+            {
+                var cv = con.CVs.FirstOrDefault(x => x.ApplicantID == id);
+                if (cv != null)
+                {
+                    return File(cv.FileContent, "application/pdf", cv.ApplicantProfile.Email + ".pdf");
+                }
+            }
+            else
+                HttpNotFound();
+
+            return null;
+        }
+
+
+        [Authorize(Roles = "Applicant")]
+        [HttpGet]
+        public ActionResult WorkExperience(string UserID = null)
+        {
+            string msg = "";
+            try
+            {
+                var userEmail = User.Identity.Name;
+                var applicant = con.ApplicantProfiles.FirstOrDefault(x => x.Email == userEmail);
+
+                if (applicant == null)
+                {
+                    msg = "Please Register as Applicant and try again later!";
+                    return Json(msg, JsonRequestBehavior.AllowGet);
+                }
+
+                var allWorkExperience = con.ApplicantWorkExperiences.Where(x => x.ApplicantID == applicant.UserId).ToList();
+                if (allWorkExperience != null && allWorkExperience.Count > 0)
+                {
+                    ViewBag.WorkExperience = allWorkExperience;
+                    ViewBag.WorkExperienceCount = allWorkExperience.Count();
+                }
+            }
+            catch (Exception ex)
+            {
+                if (ex.InnerException != null)
+                    ViewBag.msg = Session["csmsg"].ToString() + " " + ex.InnerException.Message.ToString();
+                else
+                    ViewBag.msg = Session["csmsg"].ToString() + " " + ex.Message.ToString();
+
                 return View();
             }
             return View();
         }
 
+
+        [Authorize(Roles = "Applicant")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public JsonResult JobCategory(JobCategory model)
+        public JsonResult WorkExperience(ApplicantWorkExperience model)
         {
             string msg = "";
 
-            if (ModelState.IsValid)
-            {
 
-                var dbObj = con.JobCategories.SingleOrDefault(o => o.Id == model.Id);
-                try
-                {
-                    if (model.Id != null && dbObj != null)
-                    {
-                        dbObj.Title = model.Title;
-                        dbObj.Description = model.Description;
-                        con.SaveChanges();
-                        msg = "Job Category has been created successfully!";
-                    }
-                    else
-                    {
-
-                        JobCategory objJobCategory = new JobCategory()
-                        {
-                            Title = model.Title,
-                            Description = model.Description
-                        };
-
-                        con.JobCategories.Add(objJobCategory);
-                        con.SaveChanges();
-                    }
-                }
-                catch (Exception ex)
-                {
-                    if (ex.InnerException != null)
-                        msg = "TRY AGAIN, IF PERSISTED, CONTACT ADMIN! \n" + ex.InnerException.Message.ToString();
-                    else
-                        msg = "TRY AGAIN, IF PERSISTED, CONTACT ADMIN! \n" + ex.Message.ToString();
-                }
-            }
-            else
-            {
-                msg = "OOOPS, PLEASE PROVIDE ALL VALUES!";
-            }
-            return Json(msg, JsonRequestBehavior.AllowGet);
-        }
-
-        [AllowAnonymous]
-        public ActionResult AddEditJobCategory(string ID)
-        {
-            JobCategory model = new JobCategory();
+            var dbObj = con.ApplicantWorkExperiences.FirstOrDefault(o => o.Id == model.Id);
             try
             {
-                if (ID != null)
+                var userEmail = User.Identity.Name;
+                var applicant = con.ApplicantProfiles.FirstOrDefault(x => x.Email == userEmail);
+
+                if (applicant == null)
                 {
-                    var obj = con.JobCategories.SingleOrDefault(o => o.Id == ID);
-                    if (obj != null)
+                    msg = "Please Register as Applicant and try again later!";
+                    return Json(msg, JsonRequestBehavior.AllowGet);
+                }
+
+                if (dbObj != null)
+                {
+                    dbObj.Company = model.Company;
+                    dbObj.Position = model.Position;
+                    dbObj.StartedDate = model.StartedDate;
+                    dbObj.TerminationDate = model.TerminationDate;
+                    dbObj.ApplicantID = dbObj.ApplicantID;
+                    dbObj.YearsofExperience = model.YearsofExperience;
+                    con.SaveChanges();
+                    msg = "Work Experience has been update successfully!";
+                }
+                else
+                {
+
+                    ApplicantWorkExperience objWorkEx = new ApplicantWorkExperience()
                     {
-                        model.Id = obj.Id;
-                        model.Title = obj.Title;
-                        model.Description = obj.Description;
+                        Company = model.Company,
+                        Position = model.Position,
+                        StartedDate = model.StartedDate,
+                        TerminationDate = model.TerminationDate,
+                        YearsofExperience = model.YearsofExperience,
+                        ApplicantID = applicant.UserId
+                    };
+                    if (ModelState.IsValid)
+                    {
+                        con.ApplicantWorkExperiences.Add(objWorkEx);
+                        con.SaveChanges();
+                        msg = "Work Experience has been added successfully!";
+                    }
+                    else
+                    {
+                        msg = "OOOPS, PLEASE PROVIDE ALL VALUES!";
                     }
                 }
             }
             catch (Exception ex)
             {
-                Session["grmsg"] = "TRY AGAIN, IF PERSISTED, CONTACT ADMIN!";
-                return RedirectToAction("StateBranch");
+                if (ex.InnerException != null)
+                    msg = "TRY AGAIN, IF PERSISTED, CONTACT ADMIN! \n" + ex.InnerException.Message.ToString();
+                else
+                    msg = "TRY AGAIN, IF PERSISTED, CONTACT ADMIN! \n" + ex.Message.ToString();
             }
-            return PartialView("AddEditJobCategory", model);
+
+            return Json(msg, JsonRequestBehavior.AllowGet);
         }
 
-        [Authorize(Roles = "SuperAdmin")]
-        public JsonResult DeleteJobCategory(string ID)
+        [Authorize(Roles = "Applicant")]
+        public ActionResult AddEditWorkExperience(string ID)
+        {
+            string msg = "";
+
+            ApplicantWorkExperience model = new ApplicantWorkExperience();
+            try
+            {
+
+                var userEmail = User.Identity.Name;
+                var applicant = con.ApplicantProfiles.FirstOrDefault(x => x.Email == userEmail);
+
+                if (applicant == null)
+                {
+                    msg = "Please Register as Applicant and try again later!";
+                    return Json(msg, JsonRequestBehavior.AllowGet);
+                }
+
+                if (ID != "")
+                {
+                    var obj = con.ApplicantWorkExperiences.SingleOrDefault(o => o.Id == ID);
+                    if (obj != null)
+                    {
+                        model.Id = obj.Id;
+                        model.Company = obj.Company;
+                        model.Position = obj.Position;
+                        model.StartedDate = obj.StartedDate;
+                        model.TerminationDate = obj.TerminationDate;
+                        model.YearsofExperience = obj.YearsofExperience;
+
+                    }
+                }
+                else
+                    model.ApplicantID = applicant.UserId;
+            }
+            catch (Exception ex)
+            {
+                if (ex.InnerException != null)
+                    msg = "TRY AGAIN, IF PERSISTED, CONTACT ADMIN! \n" + ex.InnerException.Message.ToString();
+                else
+                    msg = "TRY AGAIN, IF PERSISTED, CONTACT ADMIN! \n" + ex.Message.ToString();
+
+                TempData["Msg"] = msg;
+                return RedirectToAction("Index", "Home");
+            }
+
+            return PartialView("AddEditWorkExperience", model);
+        }
+
+
+        [Authorize(Roles = "Applicant")]
+public JsonResult DeleteWorkExperience(string ID)
         {
 
-            bool result = false;
+            string msg = "";
             if (ID != null)
             {
-                var objDel = con.JobCategories.SingleOrDefault(o => o.Id == ID);
+                var objDel = con.ApplicantWorkExperiences.SingleOrDefault(o => o.Id == ID);
                 if (objDel != null)
                 {
-                    con.JobCategories.Remove(objDel);
+                    con.ApplicantWorkExperiences.Remove(objDel);
                     con.SaveChanges();
-                    result = true;
+                    msg = "1";
+                }
+                else
+                {
+                    msg = "0";
                 }
             }
-            return Json(result, JsonRequestBehavior.AllowGet);
+            return Json(msg, JsonRequestBehavior.AllowGet);
         }
+
+
+
         #endregion
 
-
-
-        #region METHOD TO ADD STUDENT INTO ROLE
+        #region METHOD TO ADD INTO ROLE
         [NonAction]
         public bool RoleAssignment(string userId, string role)
         {
@@ -536,5 +719,20 @@ namespace Recruitment_Portal_System.Controllers
             }
         }
         #endregion
+
+
+        private string GetTextFromPDF(string uploadedFile)
+        {
+            StringBuilder text = new StringBuilder();
+            using (PdfReader reader = new PdfReader(uploadedFile))
+            {
+                for (int i = 1; i <= reader.NumberOfPages; i++)
+                {
+                    text.Append(PdfTextExtractor.GetTextFromPage(reader, i));
+                }
+            }
+
+            return text.ToString();
+        }
     }
 }

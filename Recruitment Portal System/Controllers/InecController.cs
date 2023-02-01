@@ -16,7 +16,7 @@ namespace Recruitment_Portal_System.Controllers
             con = new ApplicationDbContext();
         }
 
-
+        [Authorize(Roles = "Applicant")]
         [HttpGet]
         public ActionResult Index(string jobKeyWord)
         {
@@ -45,8 +45,7 @@ namespace Recruitment_Portal_System.Controllers
             }
             return View(jobs);
         }
-
-
+        [Authorize(Roles = "Applicant")]
 
         public ActionResult Details(string id)
         {
@@ -64,7 +63,7 @@ namespace Recruitment_Portal_System.Controllers
         }
 
         [Authorize(Roles = "Applicant")]
-        public ActionResult ApplyNow(string Id)
+        public ActionResult ApplyJobNow(string Id)
         {
             if (Id != null || Id != "" && User.Identity.Name != "")
             {
@@ -79,7 +78,7 @@ namespace Recruitment_Portal_System.Controllers
                         JobID = job.Id,
                         ApplicantID = applicant.UserId
                     };
-                    return View(newApplication);
+                    return PartialView("ApplyJobNow", newApplication);
                 }
             }
             TempData["Msg"] = "The process could not coompleted, validation FAILED, please try again later!";
@@ -89,13 +88,130 @@ namespace Recruitment_Portal_System.Controllers
         [Authorize(Roles = "Applicant")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult ApplyNow(JobApplication model)
+        public JsonResult ApplyNow(JobApplication model)
         {
-            if (model != null)
-            {
+            string msg = "";
 
+            //  CHECK IF APPLICANT HAS CV
+            var cv = con.CVs.FirstOrDefault(x => x.ApplicantID == model.ApplicantID);
+            if (cv != null)
+            {
+                if (model != null && ModelState.IsValid)
+                {
+                    con.JobApplications.Add(model);
+
+                    string jobApp_ID = model.Id;
+                    var appliedB4 = con.JobApplications.FirstOrDefault(x => x.ApplicantID == model.ApplicantID
+                                                        && x.JobID == model.JobID);
+                    if (appliedB4 != null)
+                    {
+                        msg = "Please you have already applied for this job!";
+                        return Json(msg, JsonRequestBehavior.AllowGet);
+                    }
+
+                    int isSaved = con.SaveChanges();
+                    if (isSaved > 0)
+                    {
+                        //CREATE USER APPLICATION HISTORY
+
+                        var userAppHis = new ApplicationHistory()
+                        {
+                            JobAppID = model.Id,
+                            Status = true
+                        };
+
+                        con.ApplicationHistories.Add(userAppHis);
+                        con.SaveChanges();
+
+
+                        //  GET LIST OF LOOK UP FROM JOB
+
+                        List<string> lookup = new List<string>();
+                        //  GET JOB
+                        var job = con.Jobs.FirstOrDefault(x => x.Id == model.JobID);
+                        if (job != null)
+                        {
+                            string[] dbLookUpArr = job.LookingFor.Split(',');
+                            foreach (var item in dbLookUpArr)
+                            {
+                                lookup.Add(item);
+                            }
+
+                            lookup.Add(job.Title);
+                            lookup.Add(job.JobCategory.Title);
+
+                            int totMatch = 0;
+                            string merits = null;
+                            string wrkExp = null;
+
+                            //GET WORK EXPERIENCE CRITERIALS
+                            var appWorkExp = con.ApplicantWorkExperiences.Where(x => x.ApplicantID == model.ApplicantID);
+                            if (appWorkExp != null)
+                            {
+                                foreach (var i in appWorkExp)
+                                {
+                                    wrkExp += i;
+                                }
+                            }
+
+                            foreach (var item in dbLookUpArr)
+                            {
+                                if (cv.CVText.Contains(item))
+                                {
+                                    merits += item + ", ";
+                                    totMatch += 1;
+                                }
+                                else if (wrkExp != null && wrkExp.Contains(item))
+                                {
+                                    merits += ", " + item;
+                                    totMatch += 1;
+                                }
+                            }
+
+                            if (totMatch > 0)
+                            {
+                                //  ADD APPLICANT TO SHORTLISTED
+                                var shortListCandidate = new ShortListedCandidate()
+                                {
+                                    ApplicantEmail = cv.ApplicantProfile.Email,
+                                    ApplicantMerit = merits,
+                                    ApplicantID = cv.ApplicantID,
+                                    MeritScore = totMatch,
+                                    JobID = job.Id
+                                };
+                                //  CHECK IF APPLICANT ALREADY EXIST BEFORE SAVING
+
+                                var appExist = con.ShortListedCandidates.FirstOrDefault(x => x.ApplicantEmail == cv.ApplicantProfile.Email
+                                                                         && x.JobID == job.Id);
+                                if (appExist == null)
+                                {
+                                    //  NOW ADD TO SHORT LISTED CANDIDATE
+                                    con.ShortListedCandidates.Add(shortListCandidate);
+                                    con.SaveChanges();
+                                }
+
+                            }
+
+
+                            msg = "Congratulations, you've successfully submitted your" +
+                        " application!";
+                        }
+                        else
+                            msg = "Sorry, job does not exist anymore in our database!";
+
+                    }
+                    //return RedirectToAction("Index");
+                    return Json(msg, JsonRequestBehavior.AllowGet);
+                }
+                msg = "Application failed, please try again shortly!";
             }
-            return View();
+            else
+                msg = "Application failed, please upload your CV and try again!";
+
+            return Json(msg, JsonRequestBehavior.AllowGet);
+            //return View(model);
         }
+
+
     }
 }

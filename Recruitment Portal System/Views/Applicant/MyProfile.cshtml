@@ -23,6 +23,8 @@
     <div class="card">
         <div class="card-heading">
             <h4 class="float-r me-3">@Model.SurName &nbsp; @Model.FirstName &nbsp;</h4>
+            <a class="nav-link" href="@Url.Action("WorkExperience","Applicant")">  <b class="lead">&nbsp; <i class="fa fa-upload"></i> &nbsp;<span class="text-warning">Work Experience</span></b></a>
+
         </div>
         <div class="card-body">
             <div class="row">
@@ -31,7 +33,7 @@
 
                         <img class="img-rounded" src="@imgx" width="150" height="150" alt="NO PASSPORT" />
                         <hr />
-                        <a class="nav-link active" href="@Url.Action("UploadPassport","Applicant")">  <b class="lead">&nbsp; <i class="fa fa-arrow-circle-left"></i> &nbsp; Upload <span class="text-warning">Passport</span></b></a>
+                        <a class="nav-link active" href="@Url.Action("UploadPassport","Applicant")">  <b class="lead">&nbsp; <i class="fa fa-upload"></i> &nbsp; Upload <span class="text-warning">Passport</span></b></a>
                         <hr />
                     </div>
                 </div>

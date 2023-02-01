@@ -127,10 +127,10 @@ namespace Recruitment_Portal_System.Models
 
 
         public virtual ApplicationUser User { get; set; }
-        public virtual ApplicantWorkExperience ApplicantWorkExperience { get; set; }
+        public virtual ICollection<ApplicantWorkExperience> ApplicantWorkExperiences { get; set; }
         public virtual CV CV { get; set; }
         public virtual ICollection<JobApplication> JobApplications { get; set; }
-
+        public virtual ICollection<ShortListedCandidate> ShortListedCandidates { get; set; }
         public ApplicantProfile()
         {
             this.CreatedOn = DateTime.Now;

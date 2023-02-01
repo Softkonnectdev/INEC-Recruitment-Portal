@@ -1,0 +1,145 @@
+﻿@model IEnumerable<Recruitment_Portal_System.Models.ShortListedCandidate>
+
+@{
+    ViewBag.Title = "Job ShortListed Candidate";
+}
+
+<div class="limiter">
+    <div class="container-login100">
+        <div class="wrap-login100">
+            <div class="login100-pic js-tilt" data-tilt>
+                <img src="~/Images/job3.png" alt="IMG">
+            </div>
+
+
+            <h2>Job ShortListed Candidate</h2>
+
+
+            <table class="table table-hover">
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.JobID)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.ApplicantEmail)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.MeritScore)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.ApplicantMerit)
+                    </th>
+                    <th></th>
+                </tr>
+
+                @foreach (var item in Model)
+                {
+                    <tr id="row_@item.Id">
+                        <td>
+                            @Html.DisplayFor(modelItem => item.JobID)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ApplicantEmail)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.MeritScore)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ApplicantMerit)
+                        </td>
+                        <td>
+                            <a href="#" class="text-danger" onclick="Remove('@item.Id')"><span class="fa fa-2x fa-trash-o"></span> </a>
+                        </td>
+                    </tr>
+                }
+               
+                    <tr>
+                        <td colspan="5">
+                            <div style="text-align: center;" id="loaderDiv1" class="pt-2">
+                                <img src="~/Images/loadingx.gif" width="80" height="80" class="img img-thumbnail" />
+                            </div>
+                            <hr />
+                            <a href="#" class="text-danger btn btn-outline-info" onclick="ScheduleInterview('@ViewBag.JobID')">Schedule Interview </a>
+                        </td>
+                    </tr>
+
+
+
+         
+            </table>
+
+
+        </div>
+    </div>
+</div>
+
+@*<script src="~/Scripts/jquery-3.4.1.js"></script>*@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js"></script>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $("#loaderDiv1").hide();
+        var Smsg = $("#msg").text();
+        if (Smsg.trim() != "") {
+            alert(Smsg);
+        }
+
+    });
+
+    var Remove = function (id) {
+        $("#loaderDiv1").show();
+
+        var Id = id;
+
+        $.ajax({
+
+            type: "POST",
+            url: "/Admin/RemoveCandidate",
+            data: { ID: Id },
+            success: function (result) {
+                if (result == true) {
+                    $("#row_" + Id).remove();
+                    alert("Candidate application dropped successfully!");
+                    $("#loaderDiv1").hide();
+                    window.location.href = "/Admin/JobShortList?id=" + Id;
+                }
+                else {
+                    alert("Candidate application was not dropped successfully!");
+                    $("#loaderDiv1").hide();
+                    window.location.href = "/Admin/JobShortList?id=" + Id;
+                }
+            }
+        })
+
+
+    }
+
+
+    var ScheduleInterview = function (id) {
+        $("#loaderDiv1").show();
+
+        var Id = id;
+
+        $.ajax({
+
+            type: "POST",
+            url: "/Admin/SceduleInterview",
+            data: { ID: Id },
+            success: function (result) {
+                if (result.trim != "" || result.trim != null) {
+                    $("#loaderDiv1").hide();
+                    alert(result);
+                    window.location.href = "/Home/Index";
+                }
+                else {
+                    alert("Inteview scheduled FAILED!");
+                    $("#loaderDiv1").hide();
+                    window.location.href = "/Admin/JobShortList?id=" + Id;
+                }
+            }
+        })
+
+
+    }
+
+</script>

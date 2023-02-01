@@ -46,18 +46,27 @@
                                                     <label class="label m-2">
                                                         <b>Salary : </b>   @item.Salary.ToString("c", ViewBag.CurrencyFmt) (<i>@item.JobType</i>)
                                                     </label>
+                                                    @if (item.Status)
+                                                    {
+                                                        <button id="btnApply" class="float-r btn btn-success" onclick="AddEdit('@item.Id')">Apply Now</button>
+                                                    }
+                                                    else
+                                                    {
+                                                        <button id="btnApply" disabled class="float-r btn btn-danger" onclick="AddEdit('@item.Id')">Apply Now</button>
+                                                    }
                                                     <p class="ps-2">
                                                         <b>Job Category: </b> <span class="">@item.JobCategory.Title,</span>
                                                         <b>Posted on :</b> @item.CreatedAt.ToString("ddd-dd/MMM/yyyy")
-                                                        <span class="float-r fw-bold">
-                                                            @Html.ActionLink("Apply", "ApplyNow", new { @Id = item.Id })
-                                                        </span>
                                                     </p>
                                                     <hr class=" m-2" />
                                                 </div>
                                             </div>
 
                                         }
+                                        <p style="display:none" id="userName">@User.Identity.Name</p>
+                                    </div>
+                                    <div style="text-align: center;" id="loaderDiv11" class="pt-2">
+                                        <img src="~/Images/loadingx.gif" width="80" height="80" class="img img-thumbnail" />
                                     </div>
                                     <div class="col-md-2">
                                         <h2>Something here soon..</h2>
@@ -73,14 +82,76 @@
 </div>
 
 
+@* MODAL BELLOW IS USED  FOR NEW/EDIT RECORD *@
+<div class="modal fade" id="AddEditModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body" id="modalBody">
+
+            </div>
+            <div class="modal-footer">
+
+
+                <div class="row">
+                    <div class="col">
+
+                        <a href="#" class=" btn btn-outline-dark py-3 mx-md-2" id="btnReset">Reset</a>
+
+                        <a href="#" class="btn btn-outline-danger py-3 mx-md-2" id="btnCancle">Close</a>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js"></script>
+
 <script src="~/Scripts/jquery-3.4.1.js"></script>
 <script>
     $(document).ready(function () {
-
+        $("#loaderDiv11").hide();
         var Smsg = $("#msg").text();
+
         if (Smsg != "") {
             alert(Smsg);
         }
+
+        $("#btnReset").click(function () {
+            $("#ApplicantCoverPage").val("");
+        })
+
+        $("#btnCancle").click(function () {
+            $("#loaderDiv11").hide();
+            $("#AddEditModal").modal("hide");
+        })
+
     });
+
+    let user = $("#userName").val();
+
+    var AddEdit = function (id) {
+        debugger;
+        if (user != " ") {
+            $("#loaderDiv11").show();
+            var url = "/Inec/ApplyJobNow?Id=" + id; //USED TO SEARCH ENTITY WITH ID
+
+            $("#modalBody").load(url, function () {  // LOAD THE CONTENT FROM THE ACTION /ADDEDITRECORD
+                $("#loaderDiv").hide();
+                $("#AddEditModal").modal("show");
+            })
+        }
+        else {
+            alert("Please login and try again, thank you!");
+            window.location.href = "/Inec/Index";
+
+        }
+
+    }
 
 </script>

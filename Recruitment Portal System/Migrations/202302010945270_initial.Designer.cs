@@ -7,13 +7,13 @@ namespace Recruitment_Portal_System.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.2.0-61023")]
-    public sealed partial class Updates9 : IMigrationMetadata
+    public sealed partial class initial : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(Updates9));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(initial));
         
         string IMigrationMetadata.Id
         {
-            get { return "202301271317301_Updates9"; }
+            get { return "202302010945270_initial"; }
         }
         
         string IMigrationMetadata.Source

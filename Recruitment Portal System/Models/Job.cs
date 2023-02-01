@@ -45,6 +45,14 @@ namespace Recruitment_Portal_System.Models
             get; set;
         }
 
+        [Required(ErrorMessage = "Looking Up For is NULL")]
+        [Display(Name = "Qualities Wanted")]
+        public string LookingFor
+        {
+            get; set;
+        }
+
+        [Required(ErrorMessage ="Status is null")]
         public bool Status
         {
             get; set;
@@ -74,6 +82,7 @@ namespace Recruitment_Portal_System.Models
         {
             get; set;
         }
+        
 
     }
 }

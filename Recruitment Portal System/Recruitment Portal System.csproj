@@ -45,6 +45,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BouncyCastle.Crypto, Version=1.8.9.0, Culture=neutral, PublicKeyToken=0e99375e54769942">
+      <HintPath>..\packages\BouncyCastle.1.8.9\lib\BouncyCastle.Crypto.dll</HintPath>
+    </Reference>
+    <Reference Include="itextsharp, Version=5.5.13.3, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL">
+      <HintPath>..\packages\iTextSharp.5.5.13.3\lib\itextsharp.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -178,13 +184,13 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202301271317301_Updates9.cs" />
-    <Compile Include="Migrations\202301271317301_Updates9.Designer.cs">
-      <DependentUpon>202301271317301_Updates9.cs</DependentUpon>
+    <Compile Include="Migrations\202302010945270_initial.cs" />
+    <Compile Include="Migrations\202302010945270_initial.Designer.cs">
+      <DependentUpon>202302010945270_initial.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202301281417259_addedProperty.cs" />
-    <Compile Include="Migrations\202301281417259_addedProperty.Designer.cs">
-      <DependentUpon>202301281417259_addedProperty.cs</DependentUpon>
+    <Compile Include="Migrations\202302011002576_Modification.cs" />
+    <Compile Include="Migrations\202302011002576_Modification.Designer.cs">
+      <DependentUpon>202302011002576_Modification.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ApplicantWorkExperience.cs" />
@@ -201,7 +207,8 @@
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\ShortListedCandidate.cs" />
     <Compile Include="Models\StateBranch.cs" />
-    <Compile Include="Models\UploadEmployeePassportViewModel.cs" />
+    <Compile Include="Models\UploadCVViewModel.cs" />
+    <Compile Include="Models\UploadPassportViewModel.cs" />
     <Compile Include="Models\UserRoleModel.cs" />
     <Compile Include="Models\Utility\BinaryToImage.cs" />
     <Compile Include="Models\Utility\GetDateHelper.cs" />
@@ -474,10 +481,16 @@
     <Content Include="Views\Applicant\CreateProfile.cshtml" />
     <Content Include="Views\Inec\Details.cshtml" />
     <Content Include="Views\Inec\Index.cshtml" />
-    <Content Include="Views\Inec\ApplyNow.cshtml" />
+    <Content Include="Views\Inec\ApplyJobNow.cshtml" />
+    <Content Include="Views\Applicant\UploadCV.cshtml" />
+    <Content Include="Views\Admin\JobApplication.cshtml" />
+    <Content Include="Views\Admin\JobShortList.cshtml" />
+    <Content Include="Views\Applicant\WorkExperience.cshtml" />
+    <Content Include="Views\Applicant\AddEditWorkExperience.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Uploads\CV\" />
     <Folder Include="Uploads\Passports\" />
   </ItemGroup>
   <ItemGroup>
@@ -494,11 +507,11 @@
     <Content Include="Scripts\jquery-3.4.1.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202301271317301_Updates9.resx">
-      <DependentUpon>202301271317301_Updates9.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202302010945270_initial.resx">
+      <DependentUpon>202302010945270_initial.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202301281417259_addedProperty.resx">
-      <DependentUpon>202301281417259_addedProperty.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202302011002576_Modification.resx">
+      <DependentUpon>202302011002576_Modification.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

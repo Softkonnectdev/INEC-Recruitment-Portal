@@ -17,21 +17,16 @@ namespace Recruitment_Portal_System.Models
             get; set;
         }
 
-        [Required(ErrorMessage = "CV Merit is NULL")]
-        public string CVMerits
+        [Required(ErrorMessage = "CV Merits")]
+        public string CVText
         {
             get; set;
         }
 
-        [Required(ErrorMessage = "CV Path is NULL")]
-        public string CVPath
-        {
-            get; set;
-        }
+        public byte[] FileContent { get; set; }
 
         [Required(ErrorMessage = "Cover Page is NULL")]
         [DataType(DataType.MultilineText)]
-        [StringLength(500, ErrorMessage = "Not more than 500 characters!")]
         public string CoverPage
         {
             get; set;

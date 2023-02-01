@@ -7,9 +7,9 @@ using System.Web;
 
 namespace Recruitment_Portal_System.Models
 {
-    public class ApplicantWorkExperience
+    public class ApplicantWorkExperience : BaseEntity
     {
-        [Key]
+      
         [ForeignKey("ApplicantProfile")]
         [Required(ErrorMessage = "Applicant ID is NULL")]
         public string ApplicantID { get; set; }
@@ -20,8 +20,14 @@ namespace Recruitment_Portal_System.Models
             get; set;
         }
 
+        [Required(ErrorMessage = "Company is NULL")]
+        public string Company
+        {
+            get; set;
+        }
+
         [Required(ErrorMessage = "Experience Years is NULL")]
-        public int YearofExperience
+        public int YearsofExperience
         {
             get; set;
         }
@@ -29,12 +35,14 @@ namespace Recruitment_Portal_System.Models
         [Required(ErrorMessage = "Date of employment is NULL")]
         [DisplayFormat(DataFormatString ="{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
         [Display(Name = "Started Date")]
+        [DataType(DataType.Date)]
         public DateTime StartedDate
         {
             get; set;
         }
         [Required(ErrorMessage = "Termination date is NULL")]
         [Display(Name = "Termination Date")]
+        [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
         public DateTime TerminationDate
         {
@@ -42,6 +50,6 @@ namespace Recruitment_Portal_System.Models
         }
 
 
-        public virtual ApplicationUser ApplicantProfile { get; set; }
+        public virtual ApplicantProfile ApplicantProfile { get; set; }
     }
 }

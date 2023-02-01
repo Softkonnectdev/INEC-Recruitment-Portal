@@ -40,10 +40,10 @@ namespace Recruitment_Portal_System.Models
         {
             get; set;
         }
-        public virtual ShortListedCandidate ShortListedCandidate 
-        {
-            get; set;
-        }
+        //public virtual ShortListedCandidate ShortListedCandidate 
+        //{
+        //    get; set;
+        //}
         public virtual ApplicationHistory ApplicationHistory
         {
             get; set;

@@ -7,23 +7,30 @@ using System.Web;
 
 namespace Recruitment_Portal_System.Models
 {
-    public class ShortListedCandidate
+    public class ShortListedCandidate : BaseEntity
     {
-        [Key]
-        [Required(ErrorMessage = "Job Application is NULL")]
-        [ForeignKey("JobApplication")]
-        public string JobApplicationID
+        [Required(ErrorMessage = "Job ID is NULL")]
+        [ForeignKey("Job")]
+        public string JobID
         {
             get; set;
         }
 
+        [Required(ErrorMessage = "Applicant is NULL")]
+        [ForeignKey("ApplicantProfile")]
+        public string ApplicantID
+        {
+            get; set;
+        }
+               
         [Required(ErrorMessage = "Applicant Email is NULL")]
         public string ApplicantEmail
         {
             get; set;
         }
-        
-        public DateTime ShortListedOn
+
+        [Required(ErrorMessage = "Applicant Merit Score")]
+        public int MeritScore
         {
             get; set;
         }
@@ -34,11 +41,9 @@ namespace Recruitment_Portal_System.Models
             get; set;
         }
 
-        public virtual JobApplication JobApplication  { get; set; }
+        public virtual ApplicantProfile ApplicantProfile { get; set; }
+        public virtual Job Job  { get; set; }
 
-        public ShortListedCandidate()
-        {
-            this.ShortListedOn = DateTime.Now;
-        }
+       
     }
 }
